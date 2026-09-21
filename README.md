@@ -7,9 +7,9 @@ RouteRisk is a native iOS navigation demo that compares travel time with **histo
 ## What is included
 
 - SwiftUI, MapKit, Core Location, async/await, MVVM architecture
-- Local, reliable Congressional App Challenge demo from the New Jersey State House to Princeton University
-- Three offline route alternatives: Fastest, Balanced, and Lower Exposure
-- Local crash records matched to route segments using configurable proximity and severity scoring
+- Live Apple Maps route alternatives from the New Jersey State House to Princeton University by default
+- Public DVRPC historical New Jersey fatal/serious-injury crash records (2017–2021), matched to route segments without an API key
+- Clearly labeled offline demo fallback and explicit coverage notices for routes outside the public dataset
 - Daytime, evening, and nighttime context, with historical nighttime adjustment
 - Faster ↔ Lower Exposure ranking control, explainable route details, map segment overlays, and MapKit destination autocomplete
 - Minimal three-screen onboarding, Dynamic Type-friendly native views, VoiceOver labels, light/dark system appearance, and non-color-only exposure labels
@@ -19,9 +19,9 @@ RouteRisk is a native iOS navigation demo that compares travel time with **histo
 1. Open [RouteRisk.xcodeproj](RouteRisk.xcodeproj) in Xcode 16 or newer.
 2. Choose an iPhone simulator running iOS 17 or newer.
 3. Build and run the `RouteRisk` scheme.
-4. Complete the short onboarding. The offline demo loads immediately. Use **Settings → Load New Jersey demo** at any time to reset it.
+4. Complete the short onboarding. The default route loads from Apple Maps and is scored against DVRPC's public historical crash layer. Use **Settings → Load New Jersey demo** for the offline demonstration.
 
-Location permission is optional. The demo works entirely from local data; MapKit search and base-map tiles are the only optional online services.
+Location permission is optional. Route search, routing, maps, and the live historical crash layer use the network. The offline demo works entirely from local data.
 
 ## Architecture
 
@@ -31,7 +31,7 @@ RouteRisk/
   Models/              Crash, route, exposure, and travel-mode models
   ViewModels/          UI orchestration and ranking state
   Services/
-    CrashData/         Local provider protocol plus future remote boundary
+    CrashData/         DVRPC public-data provider plus local demo provider
     RiskScoring/       Isolated configurable scoring engine
     Routing/           MapKit directions and autocomplete
     Location/          Permission and one-shot location support
@@ -51,7 +51,7 @@ Route cost = time weight × normalized travel time
            + exposure weight × normalized historical exposure
 ```
 
-All weights are in `RiskScoringConfiguration`, not in SwiftUI views. `CrashDataProvider` is the seam for a future New Jersey backend. The current `SampleCrashDataProvider` keeps the demo reproducible and offline.
+All weights are in `RiskScoringConfiguration`, not in SwiftUI views. `DVRPCCrashDataProvider` loads nearby public records before scoring; `SampleCrashDataProvider` keeps the explicit demo reproducible and offline.
 
 ## Tests
 
@@ -59,4 +59,4 @@ All weights are in `RiskScoringConfiguration`, not in SwiftUI views. `CrashDataP
 
 ## Data and privacy
 
-The bundled dataset is clearly marked as **Demo Data** and is representative rather than authoritative. RouteRisk requires no account and does not store movement history. A real deployment should source validated public crash data, document its methodology, and refresh results responsibly.
+RouteRisk queries DVRPC's public regional New Jersey fatal/serious-injury crash layer only for route geometry; it does not upload movement history or require an account. The live layer currently covers the greater Philadelphia region, and its 2017–2021 vintage is displayed in the app. Other destinations show an explicit coverage notice rather than an invented score. The bundled dataset remains clearly marked as **Demo Data**.

@@ -80,9 +80,11 @@ struct RouteComparisonSheet: View {
                             Text(viewModel.destinationName).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                         }
                         Spacer()
-                        if viewModel.usesDemoData {
-                            Label("Demo Data", systemImage: "testtube.2").font(.caption.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, 9).padding(.vertical, 6).background(.secondary.opacity(0.1), in: Capsule())
-                        }
+                        Label(viewModel.crashDataStatus.badgeTitle, systemImage: viewModel.crashDataStatus.systemImage)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(viewModel.crashDataStatus == .live ? .green : .secondary)
+                            .padding(.horizontal, 9).padding(.vertical, 6)
+                            .background(.secondary.opacity(0.1), in: Capsule())
                     }
                     .padding(.horizontal, 20)
 

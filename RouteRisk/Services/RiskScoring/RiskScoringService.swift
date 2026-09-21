@@ -17,14 +17,17 @@ struct RiskScoringService {
     let provider: any CrashDataProvider
     let configuration: RiskScoringConfiguration
 
-    init(provider: any CrashDataProvider = SampleCrashDataProvider(), configuration: RiskScoringConfiguration = .init()) {
+    init(provider: any CrashDataProvider = DVRPCCrashDataProvider(), configuration: RiskScoringConfiguration = .init()) {
         self.provider = provider
         self.configuration = configuration
     }
 
     func analyze(_ route: NavigationRoute, departure: DeparturePeriod, mode: TravelMode) async -> NavigationRoute {
-        let segmentExposures = await route.segments.asyncMap { segment in
-            let records = await provider.crashes(near: segment, radius: configuration.crashSearchRadiusMeters)
+        let allCrashes = await provider.allCrashes()
+        let segmentExposures = route.segments.map { segment in
+            let records = allCrashes.filter {
+                Geographic.pointToSegmentDistance(point: $0.coordinate, start: segment.start, end: segment.end) <= configuration.crashSearchRadiusMeters
+            }
             return exposure(for: segment, records: records, departure: departure, mode: mode)
         }
         let miles = max(route.miles, 0.01)
@@ -35,7 +38,6 @@ struct RiskScoringService {
         }).count
         let elevatedMiles = segmentExposures.filter { $0.level >= .elevated }.reduce(0) { $0 + $1.segment.distanceMeters / 1_609.344 }
         let nightMiles = departure == .nighttime ? segmentExposures.filter(\.nighttimeSensitive).reduce(0) { $0 + $1.segment.distanceMeters / 1_609.344 } : 0
-        let allCrashes = await provider.allCrashes()
         let nearby = segmentExposures.flatMap { item in
             allCrashes.filter { Geographic.pointToSegmentDistance(point: $0.coordinate, start: item.segment.start, end: item.segment.end) <= configuration.crashSearchRadiusMeters }
         }
@@ -48,6 +50,10 @@ struct RiskScoringService {
         var analysed = route
         analysed.exposure = exposure
         return analysed
+    }
+
+    func refreshData(for routes: [NavigationRoute]) async -> CrashDataStatus {
+        await provider.refreshData(for: routes)
     }
 
     func rank(_ routes: [NavigationRoute], preference: Double) -> [RankedRoute] {

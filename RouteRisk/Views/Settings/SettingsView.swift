@@ -7,6 +7,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section("Historical data") {
+                    Label(viewModel.crashDataStatus.detail, systemImage: viewModel.crashDataStatus.systemImage)
+                        .foregroundStyle(viewModel.crashDataStatus == .live ? .primary : .secondary)
+                }
                 Section("Demo") {
                     Button {
                         Task { await viewModel.loadDemo(); dismiss() }

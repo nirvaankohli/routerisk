@@ -19,7 +19,7 @@ struct RouteDetailView: View {
                                     .font(.subheadline).foregroundStyle(.secondary).padding(15).background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                             }
                             segments(route)
-                            Text(route.isSampleData ? "Demo data uses a local, representative crash dataset. Historical exposure is not a prediction or guarantee of safety." : "Historical exposure is not a prediction or guarantee of safety.")
+                            Text(viewModel.crashDataStatus.detail + " Historical exposure is not a prediction or guarantee of safety.")
                                 .font(.footnote).foregroundStyle(.secondary)
                         }.padding(20)
                     }
