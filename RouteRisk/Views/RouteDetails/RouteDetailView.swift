@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 struct RouteDetailView: View {
@@ -14,7 +15,7 @@ struct RouteDetailView: View {
                             explanation(route)
                             metrics(route)
                             if route.exposure.nighttimeAdjustmentMiles > 0 {
-                                Label("Nighttime history increased exposure along \(route.exposure.nighttimeAdjustmentMiles, specifier: "%.1f") miles of this route.", systemImage: "moon.stars.fill")
+                                Label(String(format: "Nighttime history increased exposure along %.1f miles of this route.", route.exposure.nighttimeAdjustmentMiles), systemImage: "moon.stars.fill")
                                     .font(.subheadline).foregroundStyle(.secondary).padding(15).background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                             }
                             segments(route)
@@ -35,7 +36,7 @@ struct RouteDetailView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(route.kind.title.uppercased()).font(.caption.weight(.bold)).foregroundStyle(.blue)
                 Text("\(route.minutes) min").font(.system(size: 40, weight: .bold, design: .rounded).monospacedDigit())
-                Text("\(route.miles, specifier: "%.1f") mi via \(route.name)").font(.subheadline).foregroundStyle(.secondary)
+                Text(String(format: "%.1f mi via %@", route.miles, route.name)).font(.subheadline).foregroundStyle(.secondary)
             }
             Spacer()
             ExposureBadge(level: route.exposure.level)
@@ -55,7 +56,7 @@ struct RouteDetailView: View {
             Text("Historical indicators").font(.headline)
             metric("Severe-crash exposure", value: String(format: "%.1f relative", route.exposure.severeCrashExposure), symbol: "bolt.shield")
             metric("High-crash intersections", value: "\(route.exposure.intersectionCount)", symbol: "arrow.triangle.turn.up.right.diamond")
-            metric("Elevated-exposure roadway", value: "\(route.exposure.elevatedMiles, specifier: "%.1f") mi", symbol: "point.topleft.down.curvedto.point.bottomright.up")
+            metric("Elevated-exposure roadway", value: String(format: "%.1f mi", route.exposure.elevatedMiles), symbol: "point.topleft.down.curvedto.point.bottomright.up")
             metric("Pedestrian exposure", value: String(format: "%.1f relative", route.exposure.pedestrianExposure), symbol: "figure.walk")
         }
     }
@@ -83,7 +84,7 @@ struct RouteDetailView: View {
     private func reasons(_ route: NavigationRoute) -> [String] {
         let fastest = viewModel.routes.min { $0.expectedTravelTime < $1.expectedTravelTime }
         let extra = max(0, route.minutes - (fastest?.minutes ?? route.minutes))
-        var values = ["Uses \(route.exposure.elevatedMiles, specifier: "%.1f") miles of elevated-exposure roadway", "Includes \(route.exposure.intersectionCount) historically high-crash intersections"]
+        var values = [String(format: "Uses %.1f miles of elevated-exposure roadway", route.exposure.elevatedMiles), "Includes \(route.exposure.intersectionCount) historically high-crash intersections"]
         if extra > 0 { values.append("Adds only \(extra) minutes compared with the fastest route") }
         if route.exposure.nighttimeAdjustmentMiles > 0 { values.append("Flags a segment with elevated nighttime crash history") }
         return values

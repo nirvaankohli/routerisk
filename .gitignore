@@ -153,6 +153,7 @@ activemq-data/
 .DS_Store
 DerivedData/
 xcuserdata/
+*.xcworkspace/
 *.xcuserstate
 .venv
 env/
