@@ -35,7 +35,7 @@ struct NavigationHomeView: View {
             .frame(maxHeight: .infinity, alignment: .top)
 
             RouteComparisonSheet(showingDetails: $showingDetails)
-                .frame(maxHeight: 385)
+                .ignoresSafeArea(.container, edges: .bottom)
         }
         .sheet(isPresented: $showingDetails) { RouteDetailView().environmentObject(viewModel) }
         .sheet(isPresented: $showingSettings) { SettingsView().environmentObject(viewModel) }

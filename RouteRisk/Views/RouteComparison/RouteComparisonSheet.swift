@@ -3,13 +3,76 @@ import SwiftUI
 struct RouteComparisonSheet: View {
     @EnvironmentObject private var viewModel: NavigationViewModel
     @Binding var showingDetails: Bool
-    @State private var expanded = false
+    @State private var isExpanded = false
+    @GestureState private var dragTranslation: CGFloat = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            Capsule().fill(.tertiary).frame(width: 38, height: 5).padding(.top, 9).padding(.bottom, 11)
-                .accessibilityHidden(true)
-            ScrollView {
+        GeometryReader { proxy in
+            let compactHeight: CGFloat = 112
+            let expandedHeight = min(proxy.size.height * 0.72, 540)
+
+            VStack(spacing: 0) {
+                Button {
+                    withAnimation(.easeOut(duration: 0.24)) { isExpanded.toggle() }
+                } label: {
+                    Capsule().fill(.tertiary).frame(width: 38, height: 5)
+                        .padding(.top, 10).padding(.bottom, 10)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isExpanded ? "Collapse route options" : "Expand route options")
+
+                if isExpanded {
+                    expandedContent
+                } else {
+                    compactSummary
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(height: isExpanded ? expandedHeight : compactHeight, alignment: .top)
+            .safeAreaPadding(.bottom, 8)
+            .background(.ultraThinMaterial)
+            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 28, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 28, style: .continuous))
+            .shadow(color: .black.opacity(0.18), radius: 18, y: -4)
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .contentShape(Rectangle())
+            .simultaneousGesture(sheetDragGesture)
+            .animation(.easeOut(duration: 0.24), value: isExpanded)
+            .accessibilityElement(children: .contain)
+        }
+    }
+
+    private var compactSummary: some View {
+        Button {
+            withAnimation(.easeOut(duration: 0.24)) { isExpanded = true }
+        } label: {
+            HStack(spacing: 12) {
+                if let selected = viewModel.selectedRoute {
+                    Image(systemName: selected.exposure.level.symbol)
+                        .foregroundStyle(selected.exposure.level.color)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Route tradeoff").font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                        Text("\(selected.minutes) min · \(selected.kind.title) · \(selected.exposure.level.title) exposure")
+                            .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    }
+                } else {
+                    Label("Route tradeoff", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
+                        .font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                }
+                Spacer()
+                Image(systemName: "chevron.up").font(.caption.weight(.bold)).foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 15)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint("Double tap to show all route options")
+    }
+
+    private var expandedContent: some View {
+        ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .firstTextBaseline) {
                         VStack(alignment: .leading, spacing: 3) {
@@ -63,13 +126,16 @@ struct RouteComparisonSheet: View {
                 }
                 .padding(.bottom, 18)
             }
-            .scrollDisabled(!expanded)
-        }
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .shadow(color: .black.opacity(0.18), radius: 18, y: -4)
-        .gesture(DragGesture().onEnded { value in if abs(value.translation.height) > 25 { expanded = value.translation.height < 0 } })
-        .accessibilityElement(children: .contain)
+    }
+
+    private var sheetDragGesture: some Gesture {
+        DragGesture(minimumDistance: 12)
+            .updating($dragTranslation) { value, state, _ in state = value.translation.height }
+            .onEnded { value in
+                let end = value.predictedEndTranslation.height
+                guard abs(end) > 36 else { return }
+                withAnimation(.easeOut(duration: 0.24)) { isExpanded = end < 0 }
+            }
     }
 
     private var preferenceText: String {
