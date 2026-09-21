@@ -1,0 +1,120 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B10000000000000000000001 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* RootView.swift */; };
+		B10000000000000000000002 /* RouteRiskApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* RouteRiskApp.swift */; };
+		B10000000000000000000003 /* CrashRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000003 /* CrashRecord.swift */; };
+		B10000000000000000000004 /* RouteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* RouteModels.swift */; };
+		B10000000000000000000005 /* ExposureBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000005 /* ExposureBadge.swift */; };
+		B10000000000000000000006 /* RiskPreferenceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* RiskPreferenceControl.swift */; };
+		B10000000000000000000007 /* RouteMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000007 /* RouteMapView.swift */; };
+		B10000000000000000000008 /* DemoRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* DemoRoutes.swift */; };
+		B10000000000000000000009 /* SampleCrashRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* SampleCrashRecords.swift */; };
+		B10000000000000000000010 /* CrashDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000010 /* CrashDataProvider.swift */; };
+		B10000000000000000000011 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000011 /* LocationService.swift */; };
+		B10000000000000000000012 /* RiskScoringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000012 /* RiskScoringService.swift */; };
+		B10000000000000000000013 /* DestinationSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000013 /* DestinationSearchService.swift */; };
+		B10000000000000000000014 /* MapRoutingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000014 /* MapRoutingService.swift */; };
+		B10000000000000000000015 /* Geographic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000015 /* Geographic.swift */; };
+		B10000000000000000000016 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000016 /* NavigationViewModel.swift */; };
+		B10000000000000000000017 /* NavigationHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000017 /* NavigationHomeView.swift */; };
+		B10000000000000000000018 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000018 /* OnboardingView.swift */; };
+		B10000000000000000000019 /* RouteComparisonSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000019 /* RouteComparisonSheet.swift */; };
+		B10000000000000000000020 /* RouteDecisionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000020 /* RouteDecisionCard.swift */; };
+		B10000000000000000000021 /* RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* RouteDetailView.swift */; };
+		B10000000000000000000022 /* SearchDock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000022 /* SearchDock.swift */; };
+		B10000000000000000000023 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000023 /* SettingsView.swift */; };
+		B10000000000000000000024 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000024 /* Assets.xcassets */; };
+		B20000000000000000000001 /* RiskScoringServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* RiskScoringServiceTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		P10000000000000000000001 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = P00000000000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = T10000000000000000000001; remoteInfo = RouteRisk; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F10000000000000000000001 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/App/RootView.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000002 /* RouteRiskApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/App/RouteRiskApp.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000003 /* CrashRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Models/CrashRecord.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000004 /* RouteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Models/RouteModels.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000005 /* ExposureBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Components/ExposureBadge.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000006 /* RiskPreferenceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Components/RiskPreferenceControl.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000007 /* RouteMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Components/RouteMapView.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000008 /* DemoRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/DemoData/DemoRoutes.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000009 /* SampleCrashRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/DemoData/SampleCrashRecords.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000010 /* CrashDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Services/CrashData/CrashDataProvider.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000011 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Services/Location/LocationService.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000012 /* RiskScoringService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Services/RiskScoring/RiskScoringService.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000013 /* DestinationSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Services/Routing/DestinationSearchService.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000014 /* MapRoutingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Services/Routing/MapRoutingService.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000015 /* Geographic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Utilities/Geographic.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000016 /* NavigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/ViewModels/NavigationViewModel.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000017 /* NavigationHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/Home/NavigationHomeView.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000018 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/Onboarding/OnboardingView.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000019 /* RouteComparisonSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/RouteComparison/RouteComparisonSheet.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000020 /* RouteDecisionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/RouteComparison/RouteDecisionCard.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000021 /* RouteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/RouteDetails/RouteDetailView.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000022 /* SearchDock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/Search/SearchDock.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000023 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRisk/Views/Settings/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000024 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = RouteRisk/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		F10000000000000000000025 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = RouteRisk/Resources/Info.plist; sourceTree = SOURCE_ROOT; };
+		F20000000000000000000001 /* RiskScoringServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteRiskTests/RiskScoringServiceTests.swift; sourceTree = SOURCE_ROOT; };
+		F30000000000000000000001 /* RouteRisk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = RouteRisk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F30000000000000000000002 /* RouteRiskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = RouteRiskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		PH10000000000000000000003 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		PH20000000000000000000003 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		G00000000000000000000001 = {isa = PBXGroup; children = (F10000000000000000000001, F10000000000000000000002, F10000000000000000000003, F10000000000000000000004, F10000000000000000000005, F10000000000000000000006, F10000000000000000000007, F10000000000000000000008, F10000000000000000000009, F10000000000000000000010, F10000000000000000000011, F10000000000000000000012, F10000000000000000000013, F10000000000000000000014, F10000000000000000000015, F10000000000000000000016, F10000000000000000000017, F10000000000000000000018, F10000000000000000000019, F10000000000000000000020, F10000000000000000000021, F10000000000000000000022, F10000000000000000000023, F10000000000000000000024, F10000000000000000000025, F20000000000000000000001, G00000000000000000000002); sourceTree = "<group>"; };
+		G00000000000000000000002 /* Products */ = {isa = PBXGroup; children = (F30000000000000000000001, F30000000000000000000002); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		T10000000000000000000001 /* RouteRisk */ = {isa = PBXNativeTarget; buildConfigurationList = C10000000000000000000003; buildPhases = (PH10000000000000000000001, PH10000000000000000000002, PH10000000000000000000003); buildRules = (); dependencies = (); name = RouteRisk; productName = RouteRisk; productReference = F30000000000000000000001; productType = "com.apple.product-type.application"; };
+		T20000000000000000000001 /* RouteRiskTests */ = {isa = PBXNativeTarget; buildConfigurationList = C20000000000000000000003; buildPhases = (PH20000000000000000000001, PH20000000000000000000002, PH20000000000000000000003); buildRules = (); dependencies = (D20000000000000000000001); name = RouteRiskTests; productName = RouteRiskTests; productReference = F30000000000000000000002; productType = "com.apple.product-type.bundle.unit-test"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		P00000000000000000000001 /* Project object */ = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 1600; LastUpgradeCheck = 1600; TargetAttributes = { T10000000000000000000001 = { CreatedOnToolsVersion = 16.0; }; T20000000000000000000001 = { CreatedOnToolsVersion = 16.0; TestTargetID = T10000000000000000000001; }; }; }; buildConfigurationList = C00000000000000000000003; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base); mainGroup = G00000000000000000000001; productRefGroup = G00000000000000000000002; projectDirPath = ""; projectRoot = ""; targets = (T10000000000000000000001, T20000000000000000000001); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		PH10000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000000000000000000024); runOnlyForDeploymentPostprocessing = 0; };
+		PH20000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		PH10000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000000000000000000001, B10000000000000000000002, B10000000000000000000003, B10000000000000000000004, B10000000000000000000005, B10000000000000000000006, B10000000000000000000007, B10000000000000000000008, B10000000000000000000009, B10000000000000000000010, B10000000000000000000011, B10000000000000000000012, B10000000000000000000013, B10000000000000000000014, B10000000000000000000015, B10000000000000000000016, B10000000000000000000017, B10000000000000000000018, B10000000000000000000019, B10000000000000000000020, B10000000000000000000021, B10000000000000000000022, B10000000000000000000023); runOnlyForDeploymentPostprocessing = 0; };
+		PH20000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B20000000000000000000001); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D20000000000000000000001 = {isa = PBXTargetDependency; target = T10000000000000000000001; targetProxy = P10000000000000000000001; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C00000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; }; name = Debug; };
+		C00000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; }; name = Release; };
+		C10000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = RouteRisk/Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.routerisk.app; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		C10000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = RouteRisk/Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.routerisk.app; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+		C20000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.routerisk.app.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RouteRisk.app/RouteRisk"; }; name = Debug; };
+		C20000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.routerisk.app.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RouteRisk.app/RouteRisk"; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C00000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000001, C00000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		C10000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (C10000000000000000000001, C10000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		C20000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (C20000000000000000000001, C20000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = P00000000000000000000001 /* Project object */;
+}
