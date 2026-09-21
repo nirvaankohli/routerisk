@@ -30,4 +30,9 @@ final class LocationService: NSObject, ObservableObject, CLLocationManagerDelega
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last?.coordinate
     }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // Simulator location can be unavailable or denied. Keep the offline demo usable.
+        currentLocation = nil
+    }
 }
