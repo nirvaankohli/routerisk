@@ -7,41 +7,32 @@ struct RouteComparisonSheet: View {
     @GestureState private var dragTranslation: CGFloat = 0
 
     var body: some View {
-        GeometryReader { proxy in
-            VStack(spacing: 0) {
-                Spacer(minLength: 0)
+        VStack(spacing: 0) {
+            Button {
+                withAnimation(.easeOut(duration: 0.24)) { isExpanded.toggle() }
+            } label: {
+                Capsule().fill(.tertiary).frame(width: 38, height: 5)
+                    .padding(.top, 10).padding(.bottom, 10)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isExpanded ? "Collapse route options" : "Expand route options")
 
-                let compactHeight: CGFloat = 112
-                let expandedHeight = min(proxy.size.height * 0.72, 540)
-
-                VStack(spacing: 0) {
-                    Button {
-                        withAnimation(.easeOut(duration: 0.24)) { isExpanded.toggle() }
-                    } label: {
-                        Capsule().fill(.tertiary).frame(width: 38, height: 5)
-                            .padding(.top, 10).padding(.bottom, 10)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(isExpanded ? "Collapse route options" : "Expand route options")
-
-                    if isExpanded {
-                        expandedContent
-                    } else {
-                        compactSummary
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .top)
-                .frame(height: isExpanded ? expandedHeight : compactHeight, alignment: .top)
-                .safeAreaPadding(.bottom, 8)
-                .background(.ultraThinMaterial)
-                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 28, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 28, style: .continuous))
-                .shadow(color: .black.opacity(0.18), radius: 18, y: -4)
-                .simultaneousGesture(sheetDragGesture)
-                .animation(.easeOut(duration: 0.24), value: isExpanded)
-                .accessibilityElement(children: .contain)
+            if isExpanded {
+                expandedContent
+            } else {
+                compactSummary
             }
         }
+        .frame(maxWidth: .infinity, alignment: .top)
+        .frame(height: isExpanded ? 520 : 112, alignment: .top)
+        .safeAreaPadding(.bottom, 8)
+        .background(.ultraThinMaterial)
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 28, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 28, style: .continuous))
+        .shadow(color: .black.opacity(0.18), radius: 18, y: -4)
+        .simultaneousGesture(sheetDragGesture)
+        .animation(.easeOut(duration: 0.24), value: isExpanded)
+        .accessibilityElement(children: .contain)
     }
 
     private var compactSummary: some View {
