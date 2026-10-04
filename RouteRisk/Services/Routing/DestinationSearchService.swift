@@ -36,4 +36,12 @@ final class DestinationSearchService: NSObject, ObservableObject, MKLocalSearchC
         guard let item = response.mapItems.first else { throw CocoaError(.fileNoSuchFile) }
         return (item.name ?? suggestion.title, item.placemark.coordinate)
     }
+
+    func resolve(query: String) async throws -> (title: String, coordinate: CLLocationCoordinate2D) {
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = query
+        let response = try await MKLocalSearch(request: request).start()
+        guard let item = response.mapItems.first else { throw CocoaError(.fileNoSuchFile) }
+        return (item.name ?? query, item.placemark.coordinate)
+    }
 }

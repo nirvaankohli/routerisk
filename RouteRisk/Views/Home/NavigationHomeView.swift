@@ -5,6 +5,7 @@ struct NavigationHomeView: View {
     @EnvironmentObject private var locationService: LocationService
     @State private var showingDetails = false
     @State private var showingSettings = false
+    @State private var showingDestinationSearch = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -21,7 +22,7 @@ struct NavigationHomeView: View {
                     Button { showingSettings = true } label: { Image(systemName: "slider.horizontal.3").frame(width: 42, height: 42).background(.regularMaterial, in: Circle()) }
                         .accessibilityLabel("Route settings")
                 }
-                SearchDock()
+                SearchDock(isPresented: $showingDestinationSearch)
                 HStack(spacing: 9) {
                     Button { locationService.requestLocation() } label: { Image(systemName: "location.fill").frame(width: 42, height: 42).background(.regularMaterial, in: Circle()) }
                         .accessibilityLabel("Use current location")
@@ -39,6 +40,7 @@ struct NavigationHomeView: View {
         }
         .sheet(isPresented: $showingDetails) { RouteDetailView().environmentObject(viewModel) }
         .sheet(isPresented: $showingSettings) { SettingsView().environmentObject(viewModel) }
+        .fullScreenCover(isPresented: $showingDestinationSearch) { DestinationSearchView() }
         .task { locationService.requestLocation() }
     }
 }
