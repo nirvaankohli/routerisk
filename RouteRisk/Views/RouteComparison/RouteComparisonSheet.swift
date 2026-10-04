@@ -1,3 +1,4 @@
+import MapKit
 import SwiftUI
 
 struct RouteComparisonSheet: View {
@@ -16,11 +17,7 @@ struct RouteComparisonSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             Button {
-                if isExpanded {
-                    onCollapseToHome()
-                } else {
-                    withAnimation(.easeOut(duration: 0.24)) { isExpanded = true }
-                }
+                withAnimation(.easeOut(duration: 0.24)) { isExpanded.toggle() }
             } label: {
                 Capsule().fill(.tertiary).frame(width: 38, height: 5)
                     .padding(.top, 10).padding(.bottom, 10)
@@ -36,7 +33,7 @@ struct RouteComparisonSheet: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .top)
-        .frame(height: isExpanded ? 520 : 112, alignment: .top)
+        .frame(height: isExpanded ? 575 : 118, alignment: .top)
         .safeAreaPadding(.bottom, 8)
         .background(RouteRiskTheme.surface.opacity(0.96))
         .clipShape(UnevenRoundedRectangle(topLeadingRadius: 28, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 28, style: .continuous))
@@ -76,62 +73,65 @@ struct RouteComparisonSheet: View {
     }
 
     private var expandedContent: some View {
-        ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    HStack(alignment: .firstTextBaseline) {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Route tradeoff").font(.headline)
-                            Text(viewModel.destinationName).font(.caption).foregroundStyle(.secondary).lineLimit(1)
-                        }
-                        Spacer()
-                        Label(viewModel.crashDataStatus.badgeTitle, systemImage: viewModel.crashDataStatus.systemImage)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(viewModel.crashDataStatus == .live ? RouteRiskTheme.accent : RouteRiskTheme.subduedText)
-                            .padding(.horizontal, 9).padding(.vertical, 6)
-                            .background(RouteRiskTheme.elevatedSurface, in: Capsule())
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Route options").font(.headline)
+                        Text(viewModel.destinationName).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                     }
-                    .padding(.horizontal, 20)
+                    Spacer()
+                    Label(viewModel.crashDataStatus.badgeTitle, systemImage: viewModel.crashDataStatus.systemImage)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(viewModel.crashDataStatus == .live ? RouteRiskTheme.accent : RouteRiskTheme.subduedText)
+                        .padding(.horizontal, 9).padding(.vertical, 6)
+                        .background(RouteRiskTheme.elevatedSurface, in: Capsule())
+                }
+                .padding(.horizontal, 20)
 
-                    if viewModel.isLoading { ProgressView("Analyzing historical crash exposure…").padding(.horizontal, 20) }
-                    if let message = viewModel.errorMessage { Label(message, systemImage: "info.circle").font(.caption).foregroundStyle(.secondary).padding(.horizontal, 20) }
-
-                    if !viewModel.routes.isEmpty {
-                        let fastest = viewModel.routes.map(\.minutes).min() ?? 0
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 11) {
-                                ForEach(viewModel.rankedRoutes) { ranked in
-                                    RouteDecisionCard(rankedRoute: ranked, isSelected: viewModel.selectedRouteID == ranked.route.id, fastestMinutes: fastest) {
-                                        withAnimation(.easeOut(duration: 0.2)) { viewModel.select(ranked.route) }
-                                    }
-                                }
-                            }.padding(.horizontal, 20).padding(.bottom, 2)
+                if viewModel.isLoading {
+                    ProgressView("Finding route alternatives…").padding(.horizontal, 20)
+                } else if let message = viewModel.errorMessage {
+                    Label(message, systemImage: "info.circle").font(.caption).foregroundStyle(.secondary).padding(.horizontal, 20)
+                } else if !viewModel.rankedRoutes.isEmpty {
+                    VStack(spacing: 8) {
+                        ForEach(viewModel.rankedRoutes) { ranked in
+                            routeRow(ranked)
                         }
+                    }
+                    .padding(.horizontal, 16)
 
-                        if let selected = viewModel.selectedRoute {
-                            VStack(alignment: .leading, spacing: 11) {
-                                HStack { Text("Preference").font(.subheadline.weight(.semibold)); Spacer(); Text(preferenceText).font(.caption).foregroundStyle(.secondary) }
-                                RiskPreferenceControl(preference: $viewModel.riskPreference)
-                                Divider()
-                                Button { showingDetails = true } label: {
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: 3) {
-                                            Text("Why this route?").font(.subheadline.weight(.semibold))
-                                            Text(explanationPreview(for: selected)).font(.caption).foregroundStyle(.secondary).lineLimit(1)
-                                        }
-                                        Spacer()
-                                        Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
-                                    }
-                                    .contentShape(Rectangle())
-                                }.buttonStyle(.plain)
+                    preferenceControl
+
+                    if let selected = viewModel.selectedRoute {
+                        HStack(spacing: 10) {
+                            Button { showingDetails = true } label: {
+                                Label("Why this route?", systemImage: "info.circle")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 46)
+                                    .background(RouteRiskTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                             }
-                            .padding(15)
-                            .background(RouteRiskTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-                            .padding(.horizontal, 20)
+                            .buttonStyle(.plain)
+
+                            Button(action: startNavigation) {
+                                Label("Start", systemImage: "location.north.fill")
+                                    .font(.subheadline.weight(.bold))
+                                    .frame(width: 104, height: 46)
+                                    .background(RouteRiskTheme.accent, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                    .foregroundStyle(RouteRiskTheme.canvas)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityHint("Opens Apple Maps with this route")
                         }
+                        .padding(.horizontal, 16)
+                        .accessibilityElement(children: .contain)
+                        .accessibilityLabel("Selected route: \(selected.minutes) minutes")
                     }
                 }
-                .padding(.bottom, 18)
             }
+            .padding(.bottom, 18)
+        }
     }
 
     private var sheetDragGesture: some Gesture {
@@ -140,12 +140,93 @@ struct RouteComparisonSheet: View {
             .onEnded { value in
                 let end = value.predictedEndTranslation.height
                 guard abs(end) > 36 else { return }
-                if end > 0 {
-                    onCollapseToHome()
-                } else {
-                    withAnimation(.easeOut(duration: 0.24)) { isExpanded = true }
-                }
+                withAnimation(.easeOut(duration: 0.24)) { isExpanded = end < 0 }
             }
+    }
+
+    private func routeRow(_ ranked: RankedRoute) -> some View {
+        let route = ranked.route
+        return Button {
+            withAnimation(.easeOut(duration: 0.2)) { viewModel.select(route) }
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: viewModel.selectedRouteID == route.id ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(viewModel.selectedRouteID == route.id ? RouteRiskTheme.action : RouteRiskTheme.subduedText)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 7) {
+                        Text(route.kind.title)
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(.primary)
+                        if ranked.rank == 1 {
+                            Text(recommendationText)
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(RouteRiskTheme.accent)
+                                .padding(.horizontal, 6).padding(.vertical, 3)
+                                .background(RouteRiskTheme.accent.opacity(0.13), in: Capsule())
+                        }
+                    }
+                    Text("\(route.minutes) min · \(route.miles, specifier: "%.1f") mi · \(route.exposure.level.title) exposure")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(routeExplanation(route))
+                        .font(.caption)
+                        .foregroundStyle(RouteRiskTheme.subduedText)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: route.exposure.level.symbol)
+                    .font(.body)
+                    .foregroundStyle(route.exposure.level.color)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(viewModel.selectedRouteID == route.id ? RouteRiskTheme.action.opacity(0.13) : RouteRiskTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(viewModel.selectedRouteID == route.id ? RouteRiskTheme.action : .clear, lineWidth: 1.5))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(route.kind.title), \(route.minutes) minutes, \(route.exposure.level.title) historical exposure")
+    }
+
+    private var preferenceControl: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack {
+                Text("Preference").font(.subheadline.weight(.semibold))
+                Spacer()
+                Text(preferenceText).font(.caption).foregroundStyle(.secondary)
+            }
+            RiskPreferenceControl(preference: $viewModel.riskPreference)
+        }
+        .padding(14)
+        .background(RouteRiskTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(.horizontal, 16)
+    }
+
+    private var recommendationText: String {
+        switch viewModel.riskPreference {
+        case ..<0.34: return "BEST FOR SPEED"
+        case 0.67...: return "BEST FOR EXPOSURE"
+        default: return "RECOMMENDED"
+        }
+    }
+
+    private func routeExplanation(_ route: NavigationRoute) -> String {
+        let fastest = viewModel.routes.map(\.minutes).min() ?? route.minutes
+        let added = max(0, route.minutes - fastest)
+        if route.kind == .fastest { return "Fastest available travel time" }
+        if route.kind == .lowerExposure { return added > 0 ? "Lower historical exposure for \(added) extra min" : "Lowest historical exposure" }
+        return "Balances time with historical exposure"
+    }
+
+    private func startNavigation() {
+        let origin = MKMapItem(placemark: MKPlacemark(coordinate: viewModel.originCoordinate))
+        origin.name = viewModel.originName
+        let destination = MKMapItem(placemark: MKPlacemark(coordinate: viewModel.destinationCoordinate))
+        destination.name = viewModel.destinationName
+        MKMapItem.openMaps(with: [origin, destination], launchOptions: [
+            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+        ])
     }
 
     private var preferenceText: String {
