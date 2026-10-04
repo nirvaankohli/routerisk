@@ -8,6 +8,7 @@ struct NavigationHomeView: View {
     @State private var showingDestinationSearch = false
     @State private var editingEndpoint: RouteEndpoint = .destination
     @State private var showingRouteOptions = false
+    @State private var routeSheetExpanded = true
     @State private var usesSatelliteMap = true
     @State private var recenterToken = UUID()
 
@@ -49,7 +50,7 @@ struct NavigationHomeView: View {
                     }
                 }
                 .padding(.trailing, 18)
-                .padding(.bottom, 254)
+                .padding(.bottom, activePanelHeight + 16)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal, 16)
@@ -57,13 +58,14 @@ struct NavigationHomeView: View {
             .frame(maxHeight: .infinity, alignment: .top)
 
             if showingRouteOptions {
-                RouteComparisonSheet(showingDetails: $showingDetails, startsExpanded: true) {
-                    withAnimation(.easeOut(duration: 0.22)) { showingRouteOptions = false }
-                }
+                RouteComparisonSheet(showingDetails: $showingDetails, isExpanded: $routeSheetExpanded)
                     .ignoresSafeArea(.container, edges: .bottom)
             } else {
                 RecentCrashesSheet(showingSettings: $showingSettings) {
-                    withAnimation(.easeOut(duration: 0.2)) { showingRouteOptions = true }
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        routeSheetExpanded = true
+                        showingRouteOptions = true
+                    }
                 }
                 .ignoresSafeArea(.container, edges: .bottom)
             }
@@ -72,7 +74,10 @@ struct NavigationHomeView: View {
         .sheet(isPresented: $showingSettings) { SettingsView().environmentObject(viewModel) }
         .fullScreenCover(isPresented: $showingDestinationSearch) {
             DestinationSearchView(endpoint: editingEndpoint) {
-                withAnimation(.easeOut(duration: 0.22)) { showingRouteOptions = true }
+                withAnimation(.easeOut(duration: 0.22)) {
+                    routeSheetExpanded = true
+                    showingRouteOptions = true
+                }
             }
         }
         .task { locationService.requestLocation() }
@@ -89,6 +94,11 @@ struct NavigationHomeView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
+    }
+
+    private var activePanelHeight: CGFloat {
+        if showingRouteOptions { return routeSheetExpanded ? 575 : 118 }
+        return 286
     }
 }
 

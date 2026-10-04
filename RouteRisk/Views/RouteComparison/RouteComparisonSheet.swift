@@ -4,14 +4,12 @@ import SwiftUI
 struct RouteComparisonSheet: View {
     @EnvironmentObject private var viewModel: NavigationViewModel
     @Binding var showingDetails: Bool
-    @State private var isExpanded: Bool
+    @Binding var isExpanded: Bool
     @GestureState private var dragTranslation: CGFloat = 0
-    let onCollapseToHome: () -> Void
 
-    init(showingDetails: Binding<Bool>, startsExpanded: Bool = false, onCollapseToHome: @escaping () -> Void = {}) {
+    init(showingDetails: Binding<Bool>, isExpanded: Binding<Bool>) {
         _showingDetails = showingDetails
-        _isExpanded = State(initialValue: startsExpanded)
-        self.onCollapseToHome = onCollapseToHome
+        _isExpanded = isExpanded
     }
 
     var body: some View {
