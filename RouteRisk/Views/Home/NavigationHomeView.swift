@@ -6,42 +6,203 @@ struct NavigationHomeView: View {
     @State private var showingDetails = false
     @State private var showingSettings = false
     @State private var showingDestinationSearch = false
+    @State private var showingRouteOptions = false
+    @State private var usesSatelliteMap = true
+    @State private var recenterToken = UUID()
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            RouteMapView(routes: viewModel.routes, selectedRoute: viewModel.selectedRoute, showsUserLocation: true)
+            RouteMapView(
+                routes: viewModel.routes,
+                selectedRoute: viewModel.selectedRoute,
+                showsUserLocation: true,
+                usesSatelliteMap: usesSatelliteMap,
+                centerCoordinate: locationService.currentLocation,
+                recenterToken: recenterToken
+            )
                 .ignoresSafeArea()
 
-            VStack(spacing: 12) {
-                HStack(alignment: .top, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("ROUTERISK").font(.caption2.weight(.heavy)).tracking(1.3).foregroundStyle(.blue)
-                        Text("Know the risk before you take the route.").font(.caption.weight(.medium)).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button { showingSettings = true } label: { Image(systemName: "slider.horizontal.3").frame(width: 42, height: 42).background(.regularMaterial, in: Circle()) }
-                        .accessibilityLabel("Route settings")
-                }
+            VStack(spacing: 0) {
                 SearchDock(isPresented: $showingDestinationSearch)
-                HStack(spacing: 9) {
-                    Button { locationService.requestLocation() } label: { Image(systemName: "location.fill").frame(width: 42, height: 42).background(.regularMaterial, in: Circle()) }
-                        .accessibilityLabel("Use current location")
-                    Spacer()
-                    DepartureMenu()
-                    ModeMenu()
+                Spacer()
+                VStack(spacing: 12) {
+                    mapControl(symbol: usesSatelliteMap ? "map" : "globe.americas.fill", label: "Change map style") {
+                        usesSatelliteMap.toggle()
+                    }
+                    mapControl(symbol: "location.fill", label: "Center on my location") {
+                        locationService.requestLocation()
+                        recenterToken = UUID()
+                    }
                 }
+                .padding(.trailing, 18)
+                .padding(.bottom, 254)
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal, 16)
-            .padding(.top, 8)
+            .padding(.top, 10)
             .frame(maxHeight: .infinity, alignment: .top)
 
-            RouteComparisonSheet(showingDetails: $showingDetails)
+            if showingRouteOptions {
+                RouteComparisonSheet(showingDetails: $showingDetails)
+                    .ignoresSafeArea(.container, edges: .bottom)
+            } else {
+                RecentCrashesSheet(showingSettings: $showingSettings) {
+                    withAnimation(.easeOut(duration: 0.2)) { showingRouteOptions = true }
+                }
                 .ignoresSafeArea(.container, edges: .bottom)
+            }
         }
         .sheet(isPresented: $showingDetails) { RouteDetailView().environmentObject(viewModel) }
         .sheet(isPresented: $showingSettings) { SettingsView().environmentObject(viewModel) }
         .fullScreenCover(isPresented: $showingDestinationSearch) { DestinationSearchView() }
         .task { locationService.requestLocation() }
+    }
+
+    private func mapControl(symbol: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 54, height: 54)
+                .background(Color(red: 0.08, green: 0.11, blue: 0.15), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .shadow(color: .black.opacity(0.24), radius: 10, y: 5)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+}
+
+private struct RecentCrashesSheet: View {
+    @EnvironmentObject private var viewModel: NavigationViewModel
+    @Binding var showingSettings: Bool
+    let showRouteOptions: () -> Void
+
+    private var segments: [SegmentExposure] {
+        (viewModel.selectedRoute?.exposure.segments ?? [])
+            .filter { $0.crashCount > 0 }
+            .sorted { lhs, rhs in
+                if lhs.level != rhs.level { return lhs.level > rhs.level }
+                return lhs.crashCount > rhs.crashCount
+            }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(.white.opacity(0.32))
+                .frame(width: 42, height: 5)
+                .padding(.top, 10)
+                .padding(.bottom, 15)
+
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Recent crashes")
+                        .font(.title2.weight(.bold))
+                    Text("Historical reports near your selected route")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.62))
+                }
+                Spacer()
+                Button(action: showRouteOptions) {
+                    Label("Routes", systemImage: "arrow.triangle.branch")
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 11)
+                        .padding(.vertical, 8)
+                        .background(.white.opacity(0.12), in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Shows route comparison options")
+            }
+            .padding(.horizontal, 22)
+
+            if segments.isEmpty {
+                emptyState
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(segments.prefix(2)) { segment in
+                        crashRow(segment)
+                    }
+                }
+                .padding(.top, 12)
+            }
+
+            Spacer(minLength: 8)
+            bottomNavigation
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 286, alignment: .top)
+        .safeAreaPadding(.bottom, 4)
+        .background(Color(red: 0.035, green: 0.05, blue: 0.08))
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 30, style: .continuous))
+        .shadow(color: .black.opacity(0.32), radius: 18, y: -5)
+        .accessibilityElement(children: .contain)
+    }
+
+    private func crashRow(_ segment: SegmentExposure) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: segment.level.symbol)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(segment.level == .lower ? .teal : .orange)
+                .frame(width: 38, height: 38)
+                .background(.white.opacity(0.10), in: Circle())
+            VStack(alignment: .leading, spacing: 3) {
+                Text(segment.segment.roadName)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                Text("\(segment.crashCount) historical reports · \(segment.level.title) exposure")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.62))
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 22)
+        .padding(.vertical, 9)
+    }
+
+    private var emptyState: some View {
+        HStack(spacing: 12) {
+            Image(systemName: viewModel.crashDataStatus.systemImage)
+                .foregroundStyle(.cyan)
+                .frame(width: 38, height: 38)
+                .background(.white.opacity(0.10), in: Circle())
+            Text(viewModel.crashDataStatus.detail)
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.68))
+                .lineLimit(2)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 22)
+        .padding(.top, 16)
+    }
+
+    private var bottomNavigation: some View {
+        HStack(spacing: 0) {
+            navigationItem("map.fill", title: "Explore", isSelected: true) {}
+            navigationItem("person.crop.circle", title: "Profile", isSelected: false) { showingSettings = true }
+        }
+        .padding(.top, 10)
+        .padding(.bottom, 6)
+        .background(Color(red: 0.055, green: 0.075, blue: 0.10))
+    }
+
+    private func navigationItem(_ symbol: String, title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 5) {
+                Image(systemName: symbol)
+                    .font(.title3.weight(.semibold))
+                    .frame(width: 54, height: 38)
+                    .background(isSelected ? Color.cyan.opacity(0.19) : .clear, in: Capsule())
+                Text(title)
+                    .font(.caption.weight(isSelected ? .semibold : .regular))
+            }
+            .foregroundStyle(isSelected ? .cyan : .white.opacity(0.64))
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 }
 

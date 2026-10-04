@@ -5,13 +5,16 @@ struct RouteMapView: UIViewRepresentable {
     let routes: [NavigationRoute]
     let selectedRoute: NavigationRoute?
     let showsUserLocation: Bool
+    let usesSatelliteMap: Bool
+    let centerCoordinate: CLLocationCoordinate2D?
+    let recenterToken: UUID
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeUIView(context: Context) -> MKMapView {
         let map = MKMapView()
         map.delegate = context.coordinator
-        map.mapType = .mutedStandard
+        map.mapType = usesSatelliteMap ? .hybrid : .mutedStandard
         map.showsUserLocation = showsUserLocation
         map.showsCompass = false
         map.pointOfInterestFilter = .includingAll
@@ -22,6 +25,12 @@ struct RouteMapView: UIViewRepresentable {
 
     func updateUIView(_ map: MKMapView, context: Context) {
         map.showsUserLocation = showsUserLocation
+        map.mapType = usesSatelliteMap ? .hybrid : .mutedStandard
+        if context.coordinator.lastRecenterToken != recenterToken {
+            context.coordinator.lastRecenterToken = recenterToken
+            let coordinate = centerCoordinate ?? DemoRoutes.origin
+            map.setCenter(coordinate, animated: true)
+        }
         map.removeOverlays(map.overlays)
         map.removeAnnotations(map.annotations.filter { !($0 is MKUserLocation) })
         context.coordinator.styles.removeAll()
@@ -51,6 +60,7 @@ struct RouteMapView: UIViewRepresentable {
     final class Coordinator: NSObject, MKMapViewDelegate {
         enum Style { case candidate, exposure(ExposureLevel) }
         var styles: [ObjectIdentifier: Style] = [:]
+        var lastRecenterToken: UUID?
 
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             guard let line = overlay as? MKPolyline else { return MKOverlayRenderer(overlay: overlay) }

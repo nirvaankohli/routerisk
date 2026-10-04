@@ -6,25 +6,32 @@ struct SearchDock: View {
 
     var body: some View {
         Button { isPresented = true } label: {
-            HStack(spacing: 11) {
-                Image(systemName: "magnifyingglass")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                Text("Where are you going?")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                Image("RouteRiskLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 38, height: 38)
+                    .clipShape(Circle())
+                Text("Search here")
+                    .font(.title3)
+                    .foregroundStyle(.white.opacity(0.66))
                 Spacer(minLength: 0)
                 Image(systemName: "mic.fill")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+                    .font(.title3)
+                    .foregroundStyle(.white.opacity(0.88))
+                Image(systemName: "shield.lefthalf.filled")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.cyan)
+                    .frame(width: 38, height: 38)
+                    .background(Color(red: 0.04, green: 0.16, blue: 0.28), in: Circle())
             }
-            .padding(.horizontal, 16)
-            .frame(height: 54)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .padding(.horizontal, 12)
+            .frame(height: 62)
+            .background(Color(red: 0.10, green: 0.12, blue: 0.16), in: Capsule())
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .shadow(color: .black.opacity(0.14), radius: 14, y: 6)
+        .shadow(color: .black.opacity(0.28), radius: 16, y: 7)
         .accessibilityLabel("Search for a destination")
         .accessibilityHint("Opens destination search")
     }
