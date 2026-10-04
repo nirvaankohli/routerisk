@@ -1,11 +1,14 @@
 import MapKit
 import SwiftUI
+import UIKit
 
 struct RouteComparisonSheet: View {
     @EnvironmentObject private var viewModel: NavigationViewModel
     @Binding var showingDetails: Bool
     @Binding var isExpanded: Bool
     @GestureState private var dragTranslation: CGFloat = 0
+    @State private var isLaunchingNavigation = false
+    @State private var couldNotOpenMaps = false
 
     init(showingDetails: Binding<Bool>, isExpanded: Binding<Bool>) {
         _showingDetails = showingDetails
@@ -113,14 +116,15 @@ struct RouteComparisonSheet: View {
                             .buttonStyle(.plain)
 
                             Button(action: startNavigation) {
-                                Label("Start", systemImage: "location.north.fill")
+                                Label(isLaunchingNavigation ? "Opening" : "Go", systemImage: isLaunchingNavigation ? "arrow.triangle.2.circlepath" : "location.north.fill")
                                     .font(.subheadline.weight(.bold))
-                                    .frame(width: 104, height: 46)
+                                    .frame(width: 112, height: 46)
                                     .background(RouteRiskTheme.accent, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                                     .foregroundStyle(RouteRiskTheme.canvas)
                             }
                             .buttonStyle(.plain)
-                            .accessibilityHint("Opens Apple Maps with this route")
+                            .disabled(isLaunchingNavigation)
+                            .accessibilityHint("Opens Apple Maps for turn-by-turn directions")
                         }
                         .padding(.horizontal, 16)
                         .accessibilityElement(children: .contain)
@@ -129,6 +133,11 @@ struct RouteComparisonSheet: View {
                 }
             }
             .padding(.bottom, 18)
+        }
+        .alert("Couldn’t open Apple Maps", isPresented: $couldNotOpenMaps) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Apple Maps needs to be available to start turn-by-turn navigation.")
         }
     }
 
@@ -218,13 +227,23 @@ struct RouteComparisonSheet: View {
     }
 
     private func startNavigation() {
-        let origin = MKMapItem(placemark: MKPlacemark(coordinate: viewModel.originCoordinate))
-        origin.name = viewModel.originName
-        let destination = MKMapItem(placemark: MKPlacemark(coordinate: viewModel.destinationCoordinate))
-        destination.name = viewModel.destinationName
-        MKMapItem.openMaps(with: [origin, destination], launchOptions: [
-            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-        ])
+        let origin = viewModel.originCoordinate
+        let destination = viewModel.destinationCoordinate
+        var components = URLComponents(string: "http://maps.apple.com/")
+        components?.queryItems = [
+            URLQueryItem(name: "saddr", value: "\(origin.latitude),\(origin.longitude)"),
+            URLQueryItem(name: "daddr", value: "\(destination.latitude),\(destination.longitude)"),
+            URLQueryItem(name: "dirflg", value: "d")
+        ]
+        guard let url = components?.url, UIApplication.shared.canOpenURL(url) else {
+            couldNotOpenMaps = true
+            return
+        }
+        isLaunchingNavigation = true
+        UIApplication.shared.open(url, options: [:]) { opened in
+            isLaunchingNavigation = false
+            if !opened { couldNotOpenMaps = true }
+        }
     }
 
     private var preferenceText: String {
