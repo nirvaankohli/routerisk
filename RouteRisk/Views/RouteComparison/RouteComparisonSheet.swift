@@ -27,7 +27,7 @@ struct RouteComparisonSheet: View {
         .frame(maxWidth: .infinity, alignment: .top)
         .frame(height: isExpanded ? 520 : 112, alignment: .top)
         .safeAreaPadding(.bottom, 8)
-        .background(.ultraThinMaterial)
+        .background(RouteRiskTheme.surface.opacity(0.96))
         .clipShape(UnevenRoundedRectangle(topLeadingRadius: 28, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: 28, style: .continuous))
         .shadow(color: .black.opacity(0.18), radius: 18, y: -4)
         .simultaneousGesture(sheetDragGesture)
@@ -75,9 +75,9 @@ struct RouteComparisonSheet: View {
                         Spacer()
                         Label(viewModel.crashDataStatus.badgeTitle, systemImage: viewModel.crashDataStatus.systemImage)
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(viewModel.crashDataStatus == .live ? .green : .secondary)
+                            .foregroundStyle(viewModel.crashDataStatus == .live ? RouteRiskTheme.accent : RouteRiskTheme.subduedText)
                             .padding(.horizontal, 9).padding(.vertical, 6)
-                            .background(.secondary.opacity(0.1), in: Capsule())
+                            .background(RouteRiskTheme.elevatedSurface, in: Capsule())
                     }
                     .padding(.horizontal, 20)
 
@@ -114,7 +114,7 @@ struct RouteComparisonSheet: View {
                                 }.buttonStyle(.plain)
                             }
                             .padding(15)
-                            .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .background(RouteRiskTheme.elevatedSurface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                             .padding(.horizontal, 20)
                         }
                     }

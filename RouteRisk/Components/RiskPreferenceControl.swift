@@ -13,7 +13,7 @@ struct RiskPreferenceControl: View {
             .font(.caption.weight(.semibold))
             .foregroundStyle(.secondary)
             Slider(value: $preference, in: 0...1)
-                .tint(.blue)
+                .tint(RouteRiskTheme.action)
                 .accessibilityLabel("Route preference, faster to lower historical exposure")
                 .accessibilityValue("\(Int(preference * 100)) percent toward lower historical exposure")
         }

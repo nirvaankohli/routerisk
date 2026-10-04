@@ -61,10 +61,10 @@ struct NavigationHomeView: View {
     private func mapControl(symbol: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.title3.weight(.semibold))
+                .font(.body.weight(.semibold))
                 .foregroundStyle(.white)
-                .frame(width: 54, height: 54)
-                .background(Color(red: 0.08, green: 0.11, blue: 0.15), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .frame(width: 44, height: 44)
+                .background(RouteRiskTheme.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .shadow(color: .black.opacity(0.24), radius: 10, y: 5)
         }
         .buttonStyle(.plain)
@@ -142,8 +142,8 @@ private struct RecentCrashesSheet: View {
         HStack(spacing: 12) {
             Image(systemName: segment.level.symbol)
                 .font(.body.weight(.semibold))
-                .foregroundStyle(segment.level == .lower ? .teal : .orange)
-                .frame(width: 38, height: 38)
+                .foregroundStyle(segment.level == .lower ? RouteRiskTheme.accent : .orange)
+                .frame(width: 32, height: 32)
                 .background(.white.opacity(0.10), in: Circle())
             VStack(alignment: .leading, spacing: 3) {
                 Text(segment.segment.roadName)
@@ -164,8 +164,8 @@ private struct RecentCrashesSheet: View {
     private var emptyState: some View {
         HStack(spacing: 12) {
             Image(systemName: viewModel.crashDataStatus.systemImage)
-                .foregroundStyle(.cyan)
-                .frame(width: 38, height: 38)
+                .foregroundStyle(RouteRiskTheme.accent)
+                .frame(width: 32, height: 32)
                 .background(.white.opacity(0.10), in: Circle())
             Text(viewModel.crashDataStatus.detail)
                 .font(.caption)
@@ -191,13 +191,13 @@ private struct RecentCrashesSheet: View {
         Button(action: action) {
             VStack(spacing: 5) {
                 Image(systemName: symbol)
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 54, height: 38)
-                    .background(isSelected ? Color.cyan.opacity(0.19) : .clear, in: Capsule())
+                    .font(.body.weight(.semibold))
+                    .frame(width: 44, height: 32)
+                    .background(isSelected ? RouteRiskTheme.accent.opacity(0.19) : .clear, in: Capsule())
                 Text(title)
                     .font(.caption.weight(isSelected ? .semibold : .regular))
             }
-            .foregroundStyle(isSelected ? .cyan : .white.opacity(0.64))
+            .foregroundStyle(isSelected ? RouteRiskTheme.accent : .white.opacity(0.64))
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
         }
