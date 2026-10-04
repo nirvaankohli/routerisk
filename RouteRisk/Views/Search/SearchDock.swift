@@ -53,8 +53,13 @@ struct DestinationSearchView: View {
     @FocusState private var searchIsFocused: Bool
     @State private var isResolving = false
     @State private var placeToSave: SavedPlace?
+    let onDestinationSelected: () -> Void
 
     private enum SavedPlace { case home, work }
+
+    init(onDestinationSelected: @escaping () -> Void = {}) {
+        self.onDestinationSelected = onDestinationSelected
+    }
 
     private var recents: [String] {
         storedRecents.split(separator: "\u{1F}").map(String.init)
@@ -268,6 +273,7 @@ struct DestinationSearchView: View {
         var values = recents.filter { $0.caseInsensitiveCompare(title) != .orderedSame }
         values.insert(title, at: 0)
         storedRecents = values.prefix(5).joined(separator: "\u{1F}")
+        onDestinationSelected()
         dismiss()
         Task { await viewModel.routeTo(destination: coordinate, name: title, origin: locationService.currentLocation) }
     }

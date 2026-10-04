@@ -8,6 +8,8 @@ struct RouteMapView: UIViewRepresentable {
     let usesSatelliteMap: Bool
     let centerCoordinate: CLLocationCoordinate2D?
     let recenterToken: UUID
+    let destination: CLLocationCoordinate2D
+    let destinationName: String
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -35,6 +37,12 @@ struct RouteMapView: UIViewRepresentable {
         map.removeAnnotations(map.annotations.filter { !($0 is MKUserLocation) })
         context.coordinator.styles.removeAll()
 
+        let destinationPin = MKPointAnnotation()
+        destinationPin.coordinate = destination
+        destinationPin.title = destinationName
+        destinationPin.subtitle = "Destination"
+        map.addAnnotation(destinationPin)
+
         for route in routes where route.id != selectedRoute?.id {
             let coordinates = route.segments.flatMap { [$0.start, $0.end] }
             let overlay = MKPolyline(coordinates: coordinates, count: coordinates.count)
@@ -55,12 +63,38 @@ struct RouteMapView: UIViewRepresentable {
                 map.addAnnotation(pin)
             }
         }
+
+        let routeSignature = routes.map(\.id)
+        if context.coordinator.lastRouteSignature != routeSignature {
+            context.coordinator.lastRouteSignature = routeSignature
+            let allCoordinates = routes.flatMap { $0.segments.flatMap { [$0.start, $0.end] } }
+            if let first = allCoordinates.first {
+                let routeRect = allCoordinates.dropFirst().map(MKMapPoint.init).reduce(MKMapRect(origin: MKMapPoint(first), size: MKMapSize(width: 0, height: 0))) { partial, point in
+                    partial.union(MKMapRect(origin: point, size: MKMapSize(width: 0, height: 0)))
+                }
+                map.setVisibleMapRect(routeRect, edgePadding: UIEdgeInsets(top: 170, left: 38, bottom: 360, right: 38), animated: true)
+            }
+        }
     }
 
     final class Coordinator: NSObject, MKMapViewDelegate {
         enum Style { case candidate, exposure(ExposureLevel) }
         var styles: [ObjectIdentifier: Style] = [:]
         var lastRecenterToken: UUID?
+        var lastRouteSignature: [UUID] = []
+
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            guard !(annotation is MKUserLocation) else { return nil }
+            let identifier = "RouteRiskMarker"
+            let marker = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+                ?? MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            marker.annotation = annotation
+            marker.canShowCallout = true
+            let isDestination = annotation.subtitle == "Destination"
+            marker.markerTintColor = isDestination ? .systemRed : .systemOrange
+            marker.glyphImage = UIImage(systemName: isDestination ? "flag.fill" : "exclamationmark.triangle.fill")
+            return marker
+        }
 
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             guard let line = overlay as? MKPolyline else { return MKOverlayRenderer(overlay: overlay) }

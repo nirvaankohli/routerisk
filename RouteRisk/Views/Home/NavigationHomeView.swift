@@ -18,12 +18,20 @@ struct NavigationHomeView: View {
                 showsUserLocation: true,
                 usesSatelliteMap: usesSatelliteMap,
                 centerCoordinate: locationService.currentLocation,
-                recenterToken: recenterToken
+                recenterToken: recenterToken,
+                destination: viewModel.destinationCoordinate,
+                destinationName: viewModel.destinationName
             )
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                SearchDock(isPresented: $showingDestinationSearch)
+                if showingRouteOptions {
+                    RouteEndpointPanel(destinationName: viewModel.destinationName) {
+                        showingDestinationSearch = true
+                    }
+                } else {
+                    SearchDock(isPresented: $showingDestinationSearch)
+                }
                 Spacer()
                 VStack(spacing: 12) {
                     mapControl(symbol: usesSatelliteMap ? "map" : "globe.americas.fill", label: "Change map style") {
@@ -43,7 +51,7 @@ struct NavigationHomeView: View {
             .frame(maxHeight: .infinity, alignment: .top)
 
             if showingRouteOptions {
-                RouteComparisonSheet(showingDetails: $showingDetails)
+                RouteComparisonSheet(showingDetails: $showingDetails, startsExpanded: true)
                     .ignoresSafeArea(.container, edges: .bottom)
             } else {
                 RecentCrashesSheet(showingSettings: $showingSettings) {
@@ -54,7 +62,11 @@ struct NavigationHomeView: View {
         }
         .sheet(isPresented: $showingDetails) { RouteDetailView().environmentObject(viewModel) }
         .sheet(isPresented: $showingSettings) { SettingsView().environmentObject(viewModel) }
-        .fullScreenCover(isPresented: $showingDestinationSearch) { DestinationSearchView() }
+        .fullScreenCover(isPresented: $showingDestinationSearch) {
+            DestinationSearchView {
+                withAnimation(.easeOut(duration: 0.22)) { showingRouteOptions = true }
+            }
+        }
         .task { locationService.requestLocation() }
     }
 
@@ -69,6 +81,61 @@ struct NavigationHomeView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
+    }
+}
+
+private struct RouteEndpointPanel: View {
+    let destinationName: String
+    let changeDestination: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 13) {
+                Image(systemName: "location.fill")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(RouteRiskTheme.action)
+                    .frame(width: 30)
+                Text("Your location")
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.72))
+                Spacer()
+                Image(systemName: "ellipsis")
+                    .foregroundStyle(RouteRiskTheme.subduedText)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+
+            HStack(spacing: 13) {
+                Image(systemName: "mappin.circle.fill")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.red.opacity(0.86))
+                    .frame(width: 30)
+                Text(destinationName)
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                Spacer()
+                Button(action: changeDestination) {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .font(.body.weight(.bold))
+                        .foregroundStyle(RouteRiskTheme.subduedText)
+                        .frame(width: 38, height: 38)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Change destination")
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 13)
+        }
+        .background(RouteRiskTheme.surface.opacity(0.98), in: RoundedRectangle(cornerRadius: 25, style: .continuous))
+        .overlay(alignment: .center) {
+            Rectangle()
+                .fill(.white.opacity(0.22))
+                .frame(height: 1)
+                .padding(.leading, 62)
+        }
+        .shadow(color: .black.opacity(0.30), radius: 16, y: 7)
+        .accessibilityElement(children: .contain)
     }
 }
 

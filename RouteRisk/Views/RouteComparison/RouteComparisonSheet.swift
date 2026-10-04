@@ -3,8 +3,13 @@ import SwiftUI
 struct RouteComparisonSheet: View {
     @EnvironmentObject private var viewModel: NavigationViewModel
     @Binding var showingDetails: Bool
-    @State private var isExpanded = false
+    @State private var isExpanded: Bool
     @GestureState private var dragTranslation: CGFloat = 0
+
+    init(showingDetails: Binding<Bool>, startsExpanded: Bool = false) {
+        _showingDetails = showingDetails
+        _isExpanded = State(initialValue: startsExpanded)
+    }
 
     var body: some View {
         VStack(spacing: 0) {

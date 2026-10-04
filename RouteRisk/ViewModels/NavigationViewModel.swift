@@ -10,6 +10,7 @@ final class NavigationViewModel: ObservableObject {
     @Published var departure: DeparturePeriod = .daytime { didSet { Task { await reanalyze() } } }
     @Published var mode: TravelMode = .driving { didSet { Task { await reanalyze() } } }
     @Published var destinationName = DemoRoutes.destinationName
+    @Published private(set) var destinationCoordinate = DemoRoutes.destination
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published private(set) var crashDataStatus: CrashDataStatus = .unavailable("Loading historical crash coverage…")
@@ -32,6 +33,7 @@ final class NavigationViewModel: ObservableObject {
         activeScoring = RiskScoringService(provider: SampleCrashDataProvider())
         origin = DemoRoutes.origin
         destinationName = DemoRoutes.destinationName
+        destinationCoordinate = DemoRoutes.destination
         await analyze(DemoRoutes.routes())
     }
 
@@ -41,6 +43,7 @@ final class NavigationViewModel: ObservableObject {
         activeScoring = liveScoring
         self.origin = origin ?? DemoRoutes.origin
         destinationName = name
+        destinationCoordinate = destination
         do {
             let options = try await routingService.routes(from: self.origin, to: destination, mode: mode)
             guard !options.isEmpty else { throw RoutingError.noRoutes }
