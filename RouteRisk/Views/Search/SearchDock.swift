@@ -3,9 +3,10 @@ import SwiftUI
 
 struct SearchDock: View {
     @Binding var isPresented: Bool
+    var prepareSearch: () -> Void = {}
 
     var body: some View {
-        Button { isPresented = true } label: {
+        Button { prepareSearch(); isPresented = true } label: {
             HStack(spacing: 12) {
                 Image("RouteRiskLogo")
                     .resizable()
@@ -54,10 +55,12 @@ struct DestinationSearchView: View {
     @State private var isResolving = false
     @State private var placeToSave: SavedPlace?
     let onDestinationSelected: () -> Void
+    let endpoint: RouteEndpoint
 
     private enum SavedPlace { case home, work }
 
-    init(onDestinationSelected: @escaping () -> Void = {}) {
+    init(endpoint: RouteEndpoint = .destination, onDestinationSelected: @escaping () -> Void = {}) {
+        self.endpoint = endpoint
         self.onDestinationSelected = onDestinationSelected
     }
 
@@ -275,14 +278,21 @@ struct DestinationSearchView: View {
         storedRecents = values.prefix(5).joined(separator: "\u{1F}")
         onDestinationSelected()
         dismiss()
-        Task { await viewModel.routeTo(destination: coordinate, name: title, origin: locationService.currentLocation) }
+        Task {
+            switch endpoint {
+            case .destination:
+                await viewModel.routeTo(destination: coordinate, name: title, origin: locationService.currentLocation, originName: "Your location")
+            case .origin:
+                await viewModel.routeTo(destination: viewModel.destinationCoordinate, name: viewModel.destinationName, origin: coordinate, originName: title)
+            }
+        }
     }
 
     private var searchPlaceholder: String {
         switch placeToSave {
         case .home: return "Search for your home"
         case .work: return "Search for your work"
-        case .none: return "Search here"
+        case .none: return endpoint == .origin ? "Search starting point" : "Search here"
         }
     }
 

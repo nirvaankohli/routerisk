@@ -5,16 +5,22 @@ struct RouteComparisonSheet: View {
     @Binding var showingDetails: Bool
     @State private var isExpanded: Bool
     @GestureState private var dragTranslation: CGFloat = 0
+    let onCollapseToHome: () -> Void
 
-    init(showingDetails: Binding<Bool>, startsExpanded: Bool = false) {
+    init(showingDetails: Binding<Bool>, startsExpanded: Bool = false, onCollapseToHome: @escaping () -> Void = {}) {
         _showingDetails = showingDetails
         _isExpanded = State(initialValue: startsExpanded)
+        self.onCollapseToHome = onCollapseToHome
     }
 
     var body: some View {
         VStack(spacing: 0) {
             Button {
-                withAnimation(.easeOut(duration: 0.24)) { isExpanded.toggle() }
+                if isExpanded {
+                    onCollapseToHome()
+                } else {
+                    withAnimation(.easeOut(duration: 0.24)) { isExpanded = true }
+                }
             } label: {
                 Capsule().fill(.tertiary).frame(width: 38, height: 5)
                     .padding(.top, 10).padding(.bottom, 10)
@@ -134,7 +140,11 @@ struct RouteComparisonSheet: View {
             .onEnded { value in
                 let end = value.predictedEndTranslation.height
                 guard abs(end) > 36 else { return }
-                withAnimation(.easeOut(duration: 0.24)) { isExpanded = end < 0 }
+                if end > 0 {
+                    onCollapseToHome()
+                } else {
+                    withAnimation(.easeOut(duration: 0.24)) { isExpanded = true }
+                }
             }
     }
 

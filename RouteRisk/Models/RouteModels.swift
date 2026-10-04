@@ -30,6 +30,11 @@ enum RouteKind: String, CaseIterable, Identifiable {
     var title: String { switch self { case .fastest: return "Fastest"; case .balanced: return "Balanced"; case .lowerExposure: return "Lower Exposure" } }
 }
 
+enum RouteEndpoint: Equatable {
+    case origin
+    case destination
+}
+
 struct GeographicSegment: Identifiable {
     let id = UUID()
     let start: CLLocationCoordinate2D
@@ -62,7 +67,7 @@ struct RouteExposure {
 
 struct NavigationRoute: Identifiable {
     let id: UUID
-    let kind: RouteKind
+    var kind: RouteKind
     let name: String
     let expectedTravelTime: TimeInterval
     let distanceMeters: CLLocationDistance

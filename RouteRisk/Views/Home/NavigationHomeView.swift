@@ -6,6 +6,7 @@ struct NavigationHomeView: View {
     @State private var showingDetails = false
     @State private var showingSettings = false
     @State private var showingDestinationSearch = false
+    @State private var editingEndpoint: RouteEndpoint = .destination
     @State private var showingRouteOptions = false
     @State private var usesSatelliteMap = true
     @State private var recenterToken = UUID()
@@ -26,11 +27,16 @@ struct NavigationHomeView: View {
 
             VStack(spacing: 0) {
                 if showingRouteOptions {
-                    RouteEndpointPanel(destinationName: viewModel.destinationName) {
-                        showingDestinationSearch = true
-                    }
+                    RouteEndpointPanel(
+                        originName: viewModel.originName,
+                        destinationName: viewModel.destinationName,
+                        changeOrigin: { editingEndpoint = .origin; showingDestinationSearch = true },
+                        changeDestination: { editingEndpoint = .destination; showingDestinationSearch = true }
+                    )
                 } else {
-                    SearchDock(isPresented: $showingDestinationSearch)
+                    SearchDock(isPresented: $showingDestinationSearch) {
+                        editingEndpoint = .destination
+                    }
                 }
                 Spacer()
                 VStack(spacing: 12) {
@@ -51,7 +57,9 @@ struct NavigationHomeView: View {
             .frame(maxHeight: .infinity, alignment: .top)
 
             if showingRouteOptions {
-                RouteComparisonSheet(showingDetails: $showingDetails, startsExpanded: true)
+                RouteComparisonSheet(showingDetails: $showingDetails, startsExpanded: true) {
+                    withAnimation(.easeOut(duration: 0.22)) { showingRouteOptions = false }
+                }
                     .ignoresSafeArea(.container, edges: .bottom)
             } else {
                 RecentCrashesSheet(showingSettings: $showingSettings) {
@@ -63,7 +71,7 @@ struct NavigationHomeView: View {
         .sheet(isPresented: $showingDetails) { RouteDetailView().environmentObject(viewModel) }
         .sheet(isPresented: $showingSettings) { SettingsView().environmentObject(viewModel) }
         .fullScreenCover(isPresented: $showingDestinationSearch) {
-            DestinationSearchView {
+            DestinationSearchView(endpoint: editingEndpoint) {
                 withAnimation(.easeOut(duration: 0.22)) { showingRouteOptions = true }
             }
         }
@@ -85,45 +93,53 @@ struct NavigationHomeView: View {
 }
 
 private struct RouteEndpointPanel: View {
+    let originName: String
     let destinationName: String
+    let changeOrigin: () -> Void
     let changeDestination: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 13) {
-                Image(systemName: "location.fill")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(RouteRiskTheme.action)
-                    .frame(width: 30)
-                Text("Your location")
-                    .font(.title3.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.72))
-                Spacer()
-                Image(systemName: "ellipsis")
-                    .foregroundStyle(RouteRiskTheme.subduedText)
+            Button(action: changeOrigin) {
+                HStack(spacing: 13) {
+                    Image(systemName: "location.fill")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(RouteRiskTheme.action)
+                        .frame(width: 30)
+                    Text(originName)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.72))
+                        .lineLimit(1)
+                    Spacer()
+                    Image(systemName: "pencil")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(RouteRiskTheme.subduedText)
+                }
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Change starting location")
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
 
-            HStack(spacing: 13) {
-                Image(systemName: "mappin.circle.fill")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(.red.opacity(0.86))
-                    .frame(width: 30)
-                Text(destinationName)
-                    .font(.title3.weight(.medium))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                Spacer()
-                Button(action: changeDestination) {
+            Button(action: changeDestination) {
+                HStack(spacing: 13) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(.red.opacity(0.86))
+                        .frame(width: 30)
+                    Text(destinationName)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                    Spacer()
                     Image(systemName: "arrow.up.arrow.down")
                         .font(.body.weight(.bold))
                         .foregroundStyle(RouteRiskTheme.subduedText)
                         .frame(width: 38, height: 38)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Change destination")
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Change destination")
             .padding(.horizontal, 18)
             .padding(.vertical, 13)
         }
