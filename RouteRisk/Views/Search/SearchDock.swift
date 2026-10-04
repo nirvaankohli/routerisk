@@ -150,7 +150,7 @@ struct DestinationSearchView: View {
     private func quickPlace(_ savedPlace: SavedPlace?, symbol: String, title: String, subtitle: String) -> some View {
         Button {
             if let savedPlace, let destination = savedDestination(for: savedPlace) {
-                completeRoute(to: destination.coordinate, title: destination.name)
+                Task { await completeRoute(to: destination.coordinate, title: destination.name) }
             } else {
                 placeToSave = savedPlace
                 query = ""
@@ -255,7 +255,7 @@ struct DestinationSearchView: View {
         Task {
             isResolving = true
             guard let result = try? await search.resolve(suggestion) else { isResolving = false; return }
-            completeRoute(to: result.coordinate, title: result.title)
+            await completeRoute(to: result.coordinate, title: result.title)
         }
     }
 
@@ -264,11 +264,11 @@ struct DestinationSearchView: View {
         Task {
             isResolving = true
             guard let result = try? await search.resolve(query: query) else { isResolving = false; return }
-            completeRoute(to: result.coordinate, title: result.title)
+            await completeRoute(to: result.coordinate, title: result.title)
         }
     }
 
-    private func completeRoute(to coordinate: CLLocationCoordinate2D, title: String) {
+    private func completeRoute(to coordinate: CLLocationCoordinate2D, title: String) async {
         if let placeToSave {
             save(title: title, coordinate: coordinate, as: placeToSave)
             self.placeToSave = nil
@@ -276,16 +276,14 @@ struct DestinationSearchView: View {
         var values = recents.filter { $0.caseInsensitiveCompare(title) != .orderedSame }
         values.insert(title, at: 0)
         storedRecents = values.prefix(5).joined(separator: "\u{1F}")
+        switch endpoint {
+        case .destination:
+            await viewModel.routeTo(destination: coordinate, name: title, origin: locationService.currentLocation, originName: "Your location")
+        case .origin:
+            await viewModel.routeTo(destination: viewModel.destinationCoordinate, name: viewModel.destinationName, origin: coordinate, originName: title)
+        }
         onDestinationSelected()
         dismiss()
-        Task {
-            switch endpoint {
-            case .destination:
-                await viewModel.routeTo(destination: coordinate, name: title, origin: locationService.currentLocation, originName: "Your location")
-            case .origin:
-                await viewModel.routeTo(destination: viewModel.destinationCoordinate, name: viewModel.destinationName, origin: coordinate, originName: title)
-            }
-        }
     }
 
     private var searchPlaceholder: String {

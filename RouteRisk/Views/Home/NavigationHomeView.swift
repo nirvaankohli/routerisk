@@ -118,6 +118,7 @@ private struct RouteEndpointPanel: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Change starting location")
+            .accessibilityHint("Opens search to choose a new starting point")
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
 
@@ -140,6 +141,7 @@ private struct RouteEndpointPanel: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Change destination")
+            .accessibilityHint("Opens search to choose a new destination")
             .padding(.horizontal, 18)
             .padding(.vertical, 13)
         }

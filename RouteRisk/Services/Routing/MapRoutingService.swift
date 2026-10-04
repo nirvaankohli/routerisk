@@ -11,6 +11,7 @@ struct MapRoutingService: RoutingService {
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: origin))
         request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
         request.transportType = mode == .driving ? .automobile : mode == .cycling ? .cycling : .walking
+        request.requestsAlternateRoutes = true
         let response = try await MKDirections(request: request).calculate()
         let kinds: [RouteKind] = [.fastest, .balanced, .lowerExposure]
         return response.routes.prefix(3).enumerated().map { index, mapRoute in
