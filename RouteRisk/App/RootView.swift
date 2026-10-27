@@ -17,10 +17,10 @@ struct RootView: View {
 }
 
 enum RouteRiskTheme {
-    static let canvas = Color(red: 0.035, green: 0.055, blue: 0.090)
-    static let surface = Color(red: 0.070, green: 0.100, blue: 0.150)
-    static let elevatedSurface = Color(red: 0.105, green: 0.140, blue: 0.195)
-    static let action = Color(red: 0.075, green: 0.480, blue: 0.953)
-    static let accent = Color(red: 0.300, green: 0.800, blue: 0.890)
-    static let subduedText = Color.white.opacity(0.64)
+    static let canvas = Color(red: 0.075, green: 0.075, blue: 0.075)
+    static let surface = Color(red: 0.16, green: 0.16, blue: 0.16)
+    static let elevatedSurface = Color(red: 0.21, green: 0.21, blue: 0.21)
+    static let action = Color(red: 0.039, green: 0.518, blue: 1.0)
+    static let accent = action
+    static let subduedText = Color.white.opacity(0.66)
 }

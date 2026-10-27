@@ -39,7 +39,7 @@ enum CrashDataStatus: Equatable {
         case .live:
             return "DVRPC historical New Jersey fatal and serious-injury crash data (2017–2021)."
         case .demo:
-            return "Representative local crash records for the offline demo."
+            return "Illustrative sample crash records for the offline demo."
         case let .unavailable(message):
             return message
         }
@@ -164,7 +164,7 @@ private extension CrashRecord {
             pedestrianInvolved: properties.pedestrian?.lowercased() == "true", cyclistInvolved: properties.bicycle?.lowercased() == "true",
             roadName: roadName, intersectionName: properties.intersection?.lowercased() == "true" ? roadName : nil,
             lightingCondition: .daylight, weatherCondition: .clear,
-            speedLimit: roadName.contains("US ") || roadName.contains("ROUTE") ? 50 : 35,
+            speedLimit: 0,
             roadClass: roadName.contains("US ") || roadName.contains("ROUTE") ? .arterial : .local
         )
     }

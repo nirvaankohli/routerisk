@@ -34,7 +34,7 @@ struct RouteDecisionCard: View {
 
     private var summary: String {
         let added = max(0, route.minutes - fastestMinutes)
-        if route.kind == .fastest { return "\(route.exposure.intersectionCount) high-crash intersections nearby" }
+        if route.kind == .fastest { return "\(route.exposure.intersectionCount) road segments near crash reports" }
         if added == 0 { return "Lower severe-crash exposure" }
         return "Avoids elevated exposure, adds \(added) min"
     }

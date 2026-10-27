@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<radialGradient id="glow"><stop offset="0" stop-color="#12334E" stop-opacity=".60"/><stop offset="1" stop-color="#0B111A" stop-opacity="0"/></radialGradient>
+<linearGradient id="route"><stop stop-color="#168CFF"/><stop offset="1" stop-color="#50E7B5"/></linearGradient>
+</defs>
+<rect width="1920" height="1080" fill="#0B111A"/>
+<ellipse cx="1560" cy="180" rx="720" ry="500" fill="url(#glow)"/>
+<line x1="90" y1="0" x2="90" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="200" y1="0" x2="200" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="310" y1="0" x2="310" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="420" y1="0" x2="420" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="530" y1="0" x2="530" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="640" y1="0" x2="640" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="750" y1="0" x2="750" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="860" y1="0" x2="860" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="970" y1="0" x2="970" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1080" y1="0" x2="1080" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1190" y1="0" x2="1190" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1300" y1="0" x2="1300" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1410" y1="0" x2="1410" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1520" y1="0" x2="1520" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1630" y1="0" x2="1630" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1740" y1="0" x2="1740" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="1850" y1="0" x2="1850" y2="1080" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="70" x2="1920" y2="70" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="180" x2="1920" y2="180" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="290" x2="1920" y2="290" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="400" x2="1920" y2="400" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="510" x2="1920" y2="510" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="620" x2="1920" y2="620" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="730" x2="1920" y2="730" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="840" x2="1920" y2="840" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="950" x2="1920" y2="950" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="1060" x2="1920" y2="1060" stroke="#243747" stroke-width="1" stroke-linecap="round"/>
+<rect x="110" y="64" width="64" height="64" rx="18" fill="#102E4B" stroke="#168CFF" stroke-width="2"/>
+<text x="142" y="111" fill="#F5F9FC" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" text-anchor="middle" letter-spacing="0">R</text>
+<text x="194" y="105" fill="#F5F9FC" font-family="Arial, Helvetica, sans-serif" font-size="29" font-weight="700" text-anchor="start" letter-spacing="4">ROUTERISK</text>
+<text x="1806" y="105" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" text-anchor="end" letter-spacing="3">EXPLAINER  /  01</text>
+<text x="110" y="221" fill="#F5F9FC" font-family="Arial, Helvetica, sans-serif" font-size="65" font-weight="700" text-anchor="start" letter-spacing="0">From crash history to route exposure</text>
+<text x="110" y="285" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="400" text-anchor="start" letter-spacing="0">A weighted formula scores the roads on each suggested route.</text>
+<line x1="110" y1="975" x2="1810" y2="975" stroke="#2B3B49" stroke-width="2" stroke-linecap="round"/>
+<text x="110" y="1024" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" text-anchor="start" letter-spacing="0">Historical exposure is a relative estimate—not a crash prediction.</text>
+<rect x="110" y="390" width="492" height="440" rx="28" fill="#16222E" stroke="#2B3B49" stroke-width="2"/>
+<rect x="144" y="422" width="84" height="84" rx="24" fill="#102F46" stroke="none" stroke-width="0"/>
+<circle cx="163" cy="454" r="10" fill="#FFB86D" stroke="none" stroke-width="0"/><circle cx="196" cy="442" r="10" fill="#FFB86D" stroke="none" stroke-width="0"/><circle cx="213" cy="479" r="10" fill="#FFB86D" stroke="none" stroke-width="0"/><circle cx="172" cy="488" r="10" fill="#FFB86D" stroke="none" stroke-width="0"/>
+<text x="144" y="558" fill="#FFB86D" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" text-anchor="start" letter-spacing="3">01  INPUT</text>
+<text x="144" y="621" fill="#F5F9FC" font-family="Arial, Helvetica, sans-serif" font-size="39" font-weight="700" text-anchor="start" letter-spacing="0">Crash history</text>
+<text x="144" y="680" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" text-anchor="start" letter-spacing="0">Public DVRPC records</text>
+<text x="144" y="721" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" text-anchor="start" letter-spacing="0">near the route</text>
+<rect x="714" y="390" width="492" height="440" rx="28" fill="#16222E" stroke="#2B3B49" stroke-width="2"/>
+<rect x="748" y="422" width="84" height="84" rx="24" fill="#102F46" stroke="none" stroke-width="0"/>
+<path d="M 756 490 C 781 475, 798 436, 824 437" fill="none" stroke="#168CFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="1"/><circle cx="804" cy="450" r="8" fill="#FFB86D" stroke="none" stroke-width="0"/>
+<text x="748" y="558" fill="#168CFF" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" text-anchor="start" letter-spacing="3">02  ANALYZE</text>
+<text x="748" y="621" fill="#F5F9FC" font-family="Arial, Helvetica, sans-serif" font-size="39" font-weight="700" text-anchor="start" letter-spacing="0">Road segments</text>
+<text x="748" y="680" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" text-anchor="start" letter-spacing="0">Weight severity,</text>
+<text x="748" y="721" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" text-anchor="start" letter-spacing="0">proximity, and recency</text>
+<rect x="1318" y="390" width="492" height="440" rx="28" fill="#16222E" stroke="#2B3B49" stroke-width="2"/>
+<rect x="1352" y="422" width="84" height="84" rx="24" fill="#102F46" stroke="none" stroke-width="0"/>
+<path d="M 1362 488 A 42 42 0 0 1 1426 488" fill="none" stroke="#50E7B5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="1"/><path d="M 1394 477 L 1413 447" fill="none" stroke="#F5F9FC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="1"/><circle cx="1394" cy="477" r="6" fill="#F5F9FC" stroke="none" stroke-width="0"/>
+<text x="1352" y="558" fill="#50E7B5" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" text-anchor="start" letter-spacing="3">03  RESULT</text>
+<text x="1352" y="621" fill="#F5F9FC" font-family="Arial, Helvetica, sans-serif" font-size="39" font-weight="700" text-anchor="start" letter-spacing="0">Exposure / mile</text>
+<text x="1352" y="680" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" text-anchor="start" letter-spacing="0">Combine segment scores</text>
+<text x="1352" y="721" fill="#A7BAC8" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" text-anchor="start" letter-spacing="0">for each whole route</text>
+<path d="M 618 610 L 698 610 M 682 595 L 698 610 L 682 625" fill="none" stroke="#168CFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M 1222 610 L 1302 610 M 1286 595 L 1302 610 L 1286 625" fill="none" stroke="#168CFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+</svg>

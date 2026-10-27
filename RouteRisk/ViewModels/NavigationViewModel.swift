@@ -11,7 +11,7 @@ final class NavigationViewModel: ObservableObject {
     @Published var mode: TravelMode = .driving { didSet { Task { await reanalyze() } } }
     @Published var destinationName = DemoRoutes.destinationName
     @Published private(set) var destinationCoordinate = DemoRoutes.destination
-    @Published private(set) var originName = "Your location"
+    @Published private(set) var originName = DemoRoutes.originName
     @Published private(set) var originCoordinate = DemoRoutes.origin
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -31,16 +31,6 @@ final class NavigationViewModel: ObservableObject {
 
     var selectedRoute: NavigationRoute? { routes.first { $0.id == selectedRouteID } }
 
-    func loadDemo() async {
-        activeScoring = RiskScoringService(provider: SampleCrashDataProvider())
-        origin = DemoRoutes.origin
-        originCoordinate = DemoRoutes.origin
-        originName = "Your location"
-        destinationName = DemoRoutes.destinationName
-        destinationCoordinate = DemoRoutes.destination
-        await analyze(DemoRoutes.routes())
-    }
-
     func routeTo(destination: CLLocationCoordinate2D, name: String, origin: CLLocationCoordinate2D?, originName: String? = nil) async {
         isLoading = true
         errorMessage = nil
@@ -55,23 +45,72 @@ final class NavigationViewModel: ObservableObject {
             guard !options.isEmpty else { throw RoutingError.noRoutes }
             await analyze(options)
         } catch {
-            errorMessage = "Couldn’t find route alternatives. Showing the offline New Jersey demo instead."
-            await loadDemo()
+            routes = []
+            rankedRoutes = []
+            selectedRouteID = nil
+            crashDataStatus = .unavailable("Historical crash exposure is unavailable until a route loads.")
+            errorMessage = "Couldn’t load routes. Check your connection and try again."
         }
         isLoading = false
     }
 
     func select(_ route: NavigationRoute) { selectedRouteID = route.id }
 
+    func reroute(from location: CLLocationCoordinate2D, via stop: TripStop? = nil, avoiding incidents: [CLLocationCoordinate2D] = []) async -> Bool {
+        guard !isLoading else { return false }
+        isLoading = true
+        errorMessage = nil
+        do {
+            let options: [NavigationRoute]
+            if let stop {
+                options = [try await routingService.route(from: location, via: stop.coordinate, to: destinationCoordinate, mode: mode)]
+            } else {
+                options = try await routingService.routes(from: location, to: destinationCoordinate, mode: mode)
+            }
+            guard !options.isEmpty else { throw RoutingError.noRoutes }
+            let viableOptions = options.filter { RouteIncidentMatcher.avoids(incidents, on: $0) }
+            guard !viableOptions.isEmpty else {
+                errorMessage = "No alternate route avoids the reported crash. Stay alert and follow road signs."
+                isLoading = false
+                return false
+            }
+            activeScoring = liveScoring
+            origin = location
+            originCoordinate = location
+            originName = "Your location"
+            selectedRouteID = nil
+            await analyze(viableOptions)
+            isLoading = false
+            return true
+        } catch {
+            errorMessage = "Couldn’t reroute. Your current route is still active."
+            isLoading = false
+            return false
+        }
+    }
+
+    func swapEndpoints() async {
+        let previousOrigin = originCoordinate
+        let previousOriginName = originName
+        await routeTo(destination: previousOrigin, name: previousOriginName,
+                      origin: destinationCoordinate, originName: destinationName)
+    }
+
     func rerank(selectRecommended: Bool = false) {
-        rankedRoutes = activeScoring.rank(routes, preference: riskPreference)
+        if case .unavailable = crashDataStatus {
+            rankedRoutes = routes.sorted { $0.expectedTravelTime < $1.expectedTravelTime }
+                .enumerated()
+                .map { RankedRoute(route: $0.element, rank: $0.offset + 1, preferenceCost: 0) }
+        } else {
+            rankedRoutes = activeScoring.rank(routes, preference: riskPreference)
+        }
         if selectRecommended { selectedRouteID = rankedRoutes.first?.route.id }
     }
 
     private func reanalyze() async { guard !routes.isEmpty else { return }; await analyze(routes) }
 
     private func loadDefaultRoute() async {
-        await routeTo(destination: DemoRoutes.destination, name: DemoRoutes.destinationName, origin: DemoRoutes.origin)
+        await routeTo(destination: DemoRoutes.destination, name: DemoRoutes.destinationName, origin: DemoRoutes.origin, originName: DemoRoutes.originName)
     }
 
     private func analyze(_ rawRoutes: [NavigationRoute]) async {
@@ -80,8 +119,8 @@ final class NavigationViewModel: ObservableObject {
         var analyzed = await rawRoutes.asyncMap { await activeScoring.analyze($0, departure: self.departure, mode: self.mode) }
         labelAlternatives(&analyzed)
         routes = analyzed
-        if selectedRouteID == nil || !analyzed.contains(where: { $0.id == selectedRouteID }) { selectedRouteID = analyzed.first?.id }
-        rerank()
+        let needsRecommendation = selectedRouteID == nil || !analyzed.contains(where: { $0.id == selectedRouteID })
+        rerank(selectRecommended: needsRecommendation)
         isLoading = false
     }
 
@@ -91,6 +130,7 @@ final class NavigationViewModel: ObservableObject {
         guard let fastest = routes.indices.min(by: { routes[$0].expectedTravelTime < routes[$1].expectedTravelTime }),
               let lowestExposure = routes.indices.min(by: { routes[$0].exposure.score < routes[$1].exposure.score }) else { return }
         routes[fastest].kind = .fastest
+        if case .unavailable = crashDataStatus { return }
         if lowestExposure != fastest { routes[lowestExposure].kind = .lowerExposure }
     }
 }

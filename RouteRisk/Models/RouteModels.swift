@@ -33,6 +33,12 @@ enum RouteKind: String, CaseIterable, Identifiable {
 enum RouteEndpoint: Equatable {
     case origin
     case destination
+    case stop
+}
+
+struct TripStop {
+    let name: String
+    let coordinate: CLLocationCoordinate2D
 }
 
 struct GeographicSegment: Identifiable {
@@ -65,6 +71,11 @@ struct RouteExposure {
     let segments: [SegmentExposure]
 }
 
+struct RouteInstruction {
+    let text: String
+    let coordinate: CLLocationCoordinate2D
+}
+
 struct NavigationRoute: Identifiable {
     let id: UUID
     var kind: RouteKind
@@ -72,6 +83,7 @@ struct NavigationRoute: Identifiable {
     let expectedTravelTime: TimeInterval
     let distanceMeters: CLLocationDistance
     let segments: [GeographicSegment]
+    let instructions: [RouteInstruction]
     var exposure: RouteExposure
     var isSampleData: Bool
 

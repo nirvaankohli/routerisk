@@ -9,7 +9,9 @@
     <key>CFBundleShortVersionString</key><string>1.0</string>
     <key>CFBundleVersion</key><string>1</string>
     <key>LSRequiresIPhoneOS</key><true/>
-    <key>NSLocationWhenInUseUsageDescription</key><string>RouteRisk uses your location only to calculate route alternatives.</string>
+    <key>NSLocationWhenInUseUsageDescription</key><string>RouteRisk uses your location to find routes and follow your chosen route while the app is open.</string>
+    <key>NSMotionUsageDescription</key><string>RouteRisk uses motion during an active trip to check for a possible impact and sudden stop when you enable parent safety alerts.</string>
+    <key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
     <key>UILaunchScreen</key><dict><key>UIColorName</key><string>AccentColor</string></dict>
     <key>UISupportedInterfaceOrientations</key><array><string>UIInterfaceOrientationPortrait</string></array>
 </dict></plist>

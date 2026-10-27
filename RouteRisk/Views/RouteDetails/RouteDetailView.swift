@@ -12,15 +12,20 @@ struct RouteDetailView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 24) {
                             header(route)
-                            explanation(route)
-                            metrics(route)
-                            if route.exposure.nighttimeAdjustmentMiles > 0 {
-                                Label(String(format: "Nighttime history increased exposure along %.1f miles of this route.", route.exposure.nighttimeAdjustmentMiles), systemImage: "moon.stars.fill")
-                                    .font(.subheadline).foregroundStyle(.secondary).padding(15).background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            if hasExposureData {
+                                explanation(route)
+                                metrics(route)
+                                if route.exposure.nighttimeAdjustmentMiles > 0 {
+                                    Label(String(format: "Nighttime history increased exposure along %.1f miles of this route.", route.exposure.nighttimeAdjustmentMiles), systemImage: "moon.stars.fill")
+                                        .font(.subheadline).foregroundStyle(.secondary).padding(15).background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                }
+                                segments(route)
+                                Text(viewModel.crashDataStatus.detail + " Historical exposure is a relative indicator, not a prediction of safety.")
+                                    .font(.footnote).foregroundStyle(.secondary)
+                            } else {
+                                Label(viewModel.crashDataStatus.detail, systemImage: "exclamationmark.triangle")
+                                    .font(.subheadline).foregroundStyle(.secondary)
                             }
-                            segments(route)
-                            Text(viewModel.crashDataStatus.detail + " Historical exposure is not a prediction or guarantee of safety.")
-                                .font(.footnote).foregroundStyle(.secondary)
                         }.padding(20)
                     }
                 } else { ContentUnavailableView("No route selected", systemImage: "map") }
@@ -39,14 +44,14 @@ struct RouteDetailView: View {
                 Text(String(format: "%.1f mi via %@", route.miles, route.name)).font(.subheadline).foregroundStyle(.secondary)
             }
             Spacer()
-            ExposureBadge(level: route.exposure.level)
+            if hasExposureData { ExposureBadge(level: route.exposure.level) }
         }
     }
 
     private func explanation(_ route: NavigationRoute) -> some View {
         VStack(alignment: .leading, spacing: 13) {
             Text("Why this route?").font(.title3.weight(.bold))
-            ForEach(reasons(route), id: \.self) { reason in Label(reason, systemImage: "checkmark.circle.fill").font(.subheadline).foregroundStyle(.primary) }
+            ForEach(reasons(route), id: \.self) { reason in Label(reason, systemImage: "info.circle").font(.subheadline).foregroundStyle(.primary) }
         }
         .padding(18).background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
@@ -55,7 +60,7 @@ struct RouteDetailView: View {
         VStack(alignment: .leading, spacing: 13) {
             Text("Historical indicators").font(.headline)
             metric("Severe-crash exposure", value: String(format: "%.1f relative", route.exposure.severeCrashExposure), symbol: "bolt.shield")
-            metric("High-crash intersections", value: "\(route.exposure.intersectionCount)", symbol: "arrow.triangle.turn.up.right.diamond")
+            metric("Road segments near crash reports", value: "\(route.exposure.intersectionCount)", symbol: "point.topleft.down.curvedto.point.bottomright.up")
             metric("Elevated-exposure roadway", value: String(format: "%.1f mi", route.exposure.elevatedMiles), symbol: "point.topleft.down.curvedto.point.bottomright.up")
             metric("Pedestrian exposure", value: String(format: "%.1f relative", route.exposure.pedestrianExposure), symbol: "figure.walk")
         }
@@ -84,9 +89,14 @@ struct RouteDetailView: View {
     private func reasons(_ route: NavigationRoute) -> [String] {
         let fastest = viewModel.routes.min { $0.expectedTravelTime < $1.expectedTravelTime }
         let extra = max(0, route.minutes - (fastest?.minutes ?? route.minutes))
-        var values = [String(format: "Uses %.1f miles of elevated-exposure roadway", route.exposure.elevatedMiles), "Includes \(route.exposure.intersectionCount) historically high-crash intersections"]
-        if extra > 0 { values.append("Adds only \(extra) minutes compared with the fastest route") }
-        if route.exposure.nighttimeAdjustmentMiles > 0 { values.append("Flags a segment with elevated nighttime crash history") }
+        var values = [String(format: "Uses %.1f miles of elevated-exposure roadway", route.exposure.elevatedMiles), "Passes \(route.exposure.intersectionCount) road segments near historical crash reports"]
+        if extra > 0 { values.append("Adds \(extra) minutes compared with the fastest route") }
+        if route.exposure.nighttimeAdjustmentMiles > 0 { values.append("Flags a segment with nighttime crash history") }
         return values
+    }
+
+    private var hasExposureData: Bool {
+        if case .unavailable = viewModel.crashDataStatus { return false }
+        return true
     }
 }

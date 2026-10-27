@@ -9,7 +9,7 @@ struct SearchSuggestion: Identifiable {
 }
 
 @MainActor
-final class DestinationSearchService: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
+final class DestinationSearchService: NSObject, ObservableObject, @preconcurrency MKLocalSearchCompleterDelegate {
     @Published private(set) var suggestions: [SearchSuggestion] = []
     private let completer = MKLocalSearchCompleter()
 
@@ -43,5 +43,14 @@ final class DestinationSearchService: NSObject, ObservableObject, MKLocalSearchC
         let response = try await MKLocalSearch(request: request).start()
         guard let item = response.mapItems.first else { throw CocoaError(.fileNoSuchFile) }
         return (item.name ?? query, item.placemark.coordinate)
+    }
+
+    func subtitle(query: String) async throws -> String {
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = query
+        let response = try await MKLocalSearch(request: request).start()
+        guard let place = response.mapItems.first?.placemark else { throw CocoaError(.fileNoSuchFile) }
+        let location = [place.locality, place.administrativeArea].compactMap { $0 }
+        return location.isEmpty ? (place.title ?? "") : location.joined(separator: ", ")
     }
 }

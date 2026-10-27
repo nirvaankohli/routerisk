@@ -2,13 +2,12 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Binding var hasCompletedOnboarding: Bool
-    @EnvironmentObject private var locationService: LocationService
     @State private var page = 0
 
     private let pages: [(symbol: String, title: String, body: String)] = [
         ("point.topleft.down.curvedto.point.bottomright.up", "Know the risk before you take the route.", "RouteRisk compares travel time with historical crash exposure."),
         ("arrow.left.arrow.right.circle.fill", "See the tradeoff.", "Understand why one route may have lower historical exposure than another."),
-        ("location.fill", "Use your location, on your terms.", "RouteRisk only requests location to find routes. No account is needed.")
+        ("location.fill", "Explore a real route.", "Start with a New Jersey trip. You can choose your own places next.")
     ]
 
     var body: some View {
@@ -38,9 +37,9 @@ struct OnboardingView: View {
                 }.tabViewStyle(.page(indexDisplayMode: .always))
 
                 Button {
-                    if page == pages.count - 1 { locationService.requestLocation(); hasCompletedOnboarding = true } else { withAnimation(.easeOut(duration: 0.2)) { page += 1 } }
+                    if page == pages.count - 1 { hasCompletedOnboarding = true } else { withAnimation(.easeOut(duration: 0.2)) { page += 1 } }
                 } label: {
-                    Text(page == pages.count - 1 ? "Enable location" : "Continue").font(.headline).frame(maxWidth: .infinity).frame(height: 54)
+                    Text(page == pages.count - 1 ? "Explore routes" : "Continue").font(.headline).frame(maxWidth: .infinity).frame(height: 54)
                 }
                 .buttonStyle(.borderedProminent).tint(.blue).padding(.horizontal, 24).padding(.bottom, 38)
             }
